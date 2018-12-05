@@ -1,4 +1,7 @@
 
+#define R_NO_REMAP // Recommended
+
+
 #include <vector>
 #include <iterator>
 #include <algorithm>
@@ -7,13 +10,13 @@
 #include <Rinternals.h>
 #include <Rcpp.h>
 
-#include "rgdal.h"
+//#include "rgdal.h"
 #include "ANN.h"
 
 
 
 #ifdef __cplusplus
-#extern "C" {
+extern "C" {
 #endif
 
 

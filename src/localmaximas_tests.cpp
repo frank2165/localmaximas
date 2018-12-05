@@ -9,7 +9,7 @@ may be checked in R.
 #include "localmaximas_tests.h"
 
 #ifdef __cplusplus
-#extern "C"{
+extern "C"{
 #endif
 
 
@@ -22,7 +22,7 @@ SEXP test_get_coordinates(SEXP sxpHandle){
 
 	rows = sizeof(pts) / sizeof(pts[0]);
 	cols = sizeof(pts[0]) / sizeof(pts[0][0]);
-	sxpPts = PROTECT(allocVector(REALSXP, rows * cols));
+	sxpPts = Rf_protect(Rf_allocVector(REALSXP, rows * cols));
 
 	for (int j = 0; j < cols; j++){
 		for (int i = 0; i < rows; i++){
@@ -30,7 +30,7 @@ SEXP test_get_coordinates(SEXP sxpHandle){
 		}
 	}
 
-	UNPROTECT(1);
+	Rf_unprotect(1);
 	return sxpPts;
 }
 

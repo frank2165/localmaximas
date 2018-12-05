@@ -7,30 +7,8 @@ Functions for interacting with the GDAL C++ library
 
 
 #ifdef __cplusplus
-#extern "C" {
+extern "C" {
 #endif
-
-
-/*
-void Rcpp_local_maximas(Rcpp::List handleList, Rcpp::NumericVector searchRadius){
-
-double radius = searchRadius[0];
-
-
-// I imagine that this loop is where the multi-threaded buggery will happen.
-for(unsigned int i = 0; i < handleList.size(); i++){
-find_local_maxima(handleList[i], radius);
-}
-
-return;
-}
-*/
-
-
-
-
-
-//void find_local_maxima(SEXP sxpHandle, double radius){}
 
 
 ANNpointArray get_coordinates(SEXP sxpHandle){
@@ -45,23 +23,23 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 	// Get XSize and YSize for GDALReadOnlyDataset
 	sxpXSize = RGDAL_GetRasterXSize(sxpHandle);
 	sxpYSize = RGDAL_GetRasterYSize(sxpHandle);
-	XSize = sxpXSize[0];
-	YSize = sxpYSize[0];
+	XSize = Rf_asInteger(sxpXSize);
+	YSize = Rf_asInteger(sxpYSize);
 	NumPts = XSize * YSize;
 
 
 	// Get coordinate information GDALReadOnlyDataset
 	sxpGt = RGDAL_GetGeoTransform(sxpHandle);
-	if (getAttrib(sxpGt, "CE_Failure")){
-		stop("Could not get attributes from dataset handle!")
+	if (Rf_getAttrib(sxpGt, "CE_Failure")){
+		Rcpp::stop("Could not get attributes from dataset handle!");
 	}
 
 
 	// Set coordinate information
-	origin_x = sxpGt[0];
-	origin_y = sxpGt[3];
-	res_x = sxpGt[1];
-	res_y = sxpGt[4];
+	origin_x = REAL(sxpGt)[0];
+	origin_y = REAL(sxpGt)[3];
+	res_x = REAL(sxpGt)[1];
+	res_y = REAL(sxpGt)[4];
 
 
 	// Set origin coordinates to be the centroid of the first pixel
@@ -103,42 +81,43 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	// Get XSize and YSize
 	sxpXSize = RGDAL_GetRasterXSize(sxpHandle);
 	sxpYSize = RGDAL_GetRasterYSize(sxpHandle);
-	XSize = sxpXSize[0];
-	YSize = sxpYSize[0];
+	XSize = Rf_asInteger(sxpXSize);
+	YSize = Rf_asInteger(sxpYSize);
 	numPts = XSize * YSize;
 
 	// Set RGDAL_getRasterData args
-	SEXP sxpOffset = PROTECT(allocVector(REALSXP, 2));
-	SEXP sxpDimReg = PROTECT(allocVector(REALSXP, 2));
-	SEXP sxpDimOut = PROTECT(allocVector(REALSXP, 2));
-	SEXP sxpInterleave = PROTECT(allocVector(REALSXP, 2));
+	SEXP sxpOffset = Rf_protect(Rf_allocVector(REALSXP, 2));
+	SEXP sxpDimReg = Rf_protect(Rf_allocVector(REALSXP, 2));
+	SEXP sxpDimOut = Rf_protect(Rf_allocVector(REALSXP, 2));
+	SEXP sxpInterleave = Rf_protect(Rf_allocVector(REALSXP, 2));
 
-	memset(REAL(sxpOffset), 0, 2 * sizeof(double);
-	memset(REAL(sxpInterleave), 0, 2 * sizeof(double);
+	memset(REAL(sxpOffset), 0, 2 * sizeof(double));
+	memset(REAL(sxpInterleave), 0, 2 * sizeof(double));
 
-	sxpDimReg[0] = XSize;
-	sxpDimReg[1] = YSize;
+	INTEGER(sxpDimReg)[0] = XSize;
+	INTEGER(sxpDimReg)[1] = YSize;
 	sxpDimOut = sxpDimReg;
 
 
 	// Read raster data
-	sxpRaster = RGDAL_getRasterBand(sxpHandle, 1);
+	sxpRaster  = RGDAL_getRasterBand(sxpHandle, 1);
 	sxpHeights = RGDAL_getRasterData(sxpRaster, sxpDimReg, sxpDimOut, sxpInterleave);
 
 
 	// Store heights in output std::vector<double>
 	heights.resize(numPts);
+	double* pH = REAL(sxpHeights); // Recommended for long vectors
 	for (int i = 0; i < numPts; i++){
-		heights[i] = sxpHeights[i];
+		heights[i] = pH[i];
 	}
 
 
-	UNPROTECT(4);
+	Rf_unprotect(4);
 	return heights;
 }
 
 
-std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> &heights){
+std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> heights){
 
 	SEXP sxpRaster, sxpNoDataValue;
 	std::vector<int> idxMissing;
@@ -152,14 +131,14 @@ std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> &heights){
 	*/
 	sxpRaster = RGDAL_getRasterBand(sxpHandle, 1);
 	sxpNoDataValue = RGDAL_GetBandNoDataValue(sxpRaster);
-	ndv = sxpNoDataValue[0];
+	ndv = Rf_asReal(sxpNoDataValue);
 
 	// Search heights for all occurrances of ndv.
 	// https://stackoverflow.com/questions/25846235/finding-the-indexes-of-all-occurrences-of-an-element-in-a-vector
 	std::vector<double>::iterator it = heights.begin();
 	while ((it = std::find_if(it, heights.end(), ndv)) != heights.end()){
-		idxMissing.push_back(std::distance(heights.begin()), it);
-		it++
+		idxMissing.push_back(std::distance(heights.begin(), it)); // C indexing!
+		it++;
 	}
 
 	return idxMissing;
