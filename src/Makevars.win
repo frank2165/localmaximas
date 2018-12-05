@@ -14,9 +14,5 @@ PKG_CPPFLAGS =\
 
 PKG_LIBS = \
   -L$(RWINLIB)/$(TARGET) \
-  -lgdal -lsqlite3 -lspatialite -lproj -lgeos_c -lgeos  \
-  -ljson-c -lnetcdf -lmariadbclient -lpq -lintl -lwebp -lcurl -lssh2 -lssl -lcrypto \
-  -lkea -lhdf5_cpp -lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
-  -lmfhdf -ldf -lxdr \
-  -lopenjp2 -ljasper -lpng16 -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lszip -lz \
-  -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32
+  -lgdal -lspatialite -lproj -lgeos_c -lgeos  \
+  -ltiff -lgeotiff
