@@ -5,20 +5,59 @@
 
 using namespace Rcpp;
 
-// read_tiff
-Rcpp::NumericVector read_tiff(Rcpp::CharacterVector file);
-RcppExport SEXP _localmaximas_read_tiff(SEXP fileSEXP) {
+// test_get_coordinates
+SEXP test_get_coordinates(SEXP sxpHandle);
+RcppExport SEXP _localmaximas_test_get_coordinates(SEXP sxpHandleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type file(fileSEXP);
-    rcpp_result_gen = Rcpp::wrap(read_tiff(file));
+    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_get_coordinates(sxpHandle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_get_heights
+SEXP test_get_heights(SEXP sxpHandle);
+RcppExport SEXP _localmaximas_test_get_heights(SEXP sxpHandleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_get_heights(sxpHandle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// test_index_missing
+SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights);
+RcppExport SEXP _localmaximas_test_index_missing(SEXP sxpHandleSEXP, SEXP sxpHeightsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
+    Rcpp::traits::input_parameter< SEXP >::type sxpHeights(sxpHeightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_index_missing(sxpHandle, sxpHeights));
+    return rcpp_result_gen;
+END_RCPP
+}
+// R_maxima_search
+IntegerVector R_maxima_search(NumericMatrix xy, NumericVector z, double eps);
+RcppExport SEXP _localmaximas_R_maxima_search(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericMatrix >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
+    rcpp_result_gen = Rcpp::wrap(R_maxima_search(xy, z, eps));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_localmaximas_read_tiff", (DL_FUNC) &_localmaximas_read_tiff, 1},
+    {"_localmaximas_test_get_coordinates", (DL_FUNC) &_localmaximas_test_get_coordinates, 1},
+    {"_localmaximas_test_get_heights", (DL_FUNC) &_localmaximas_test_get_heights, 1},
+    {"_localmaximas_test_index_missing", (DL_FUNC) &_localmaximas_test_index_missing, 2},
+    {"_localmaximas_R_maxima_search", (DL_FUNC) &_localmaximas_R_maxima_search, 3},
     {NULL, NULL, 0}
 };
 
