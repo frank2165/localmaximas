@@ -1,6 +1,6 @@
 
 
-#'
+#
 local_maximas <- function(file, min.radius = 1, max.radius = 2, chm.res = 0.25){
     
     candidates <- lidR::readLAS(file, select = "xyz", filter = "-keep_classification 5") %>% 

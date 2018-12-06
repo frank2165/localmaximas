@@ -9,7 +9,8 @@ PKG_CPPFLAGS =\
   -I$(RWINLIB)/include/gdal \
   -I$(RWINLIB)/include/geos \
   -I$(RWINLIB)/include/proj \
-  -IANN
+  -IANN \
+  -I.
 
 PKG_LIBS = \
   -L$(RWINLIB)/$(TARGET) \

@@ -29,8 +29,9 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 
 
 	// Get coordinate information GDALReadOnlyDataset
+	SEXP sxpAttr = Rf_mkChar("CE_Failure");
 	sxpGt = RGDAL_GetGeoTransform(sxpHandle);
-	if (Rf_getAttrib(sxpGt, "CE_Failure")){
+	if (Rf_getAttrib(sxpGt, sxpAttr)){
 		Rcpp::stop("Could not get attributes from dataset handle!");
 	}
 
@@ -85,7 +86,7 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	YSize = Rf_asInteger(sxpYSize);
 	numPts = XSize * YSize;
 
-	// Set RGDAL_getRasterData args
+	// Set RGDAL_GetRasterData args
 	SEXP sxpOffset = Rf_protect(Rf_allocVector(REALSXP, 2));
 	SEXP sxpDimReg = Rf_protect(Rf_allocVector(REALSXP, 2));
 	SEXP sxpDimOut = Rf_protect(Rf_allocVector(REALSXP, 2));
@@ -100,8 +101,8 @@ std::vector<double> get_heights(SEXP sxpHandle){
 
 
 	// Read raster data
-	sxpRaster  = RGDAL_getRasterBand(sxpHandle, 1);
-	sxpHeights = RGDAL_getRasterData(sxpRaster, sxpDimReg, sxpDimOut, sxpInterleave);
+	sxpRaster  = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1));
+	sxpHeights = RGDAL_GetRasterData(sxpRaster, sxpDimReg, sxpDimOut, sxpInterleave);
 
 
 	// Store heights in output std::vector<double>
@@ -117,7 +118,7 @@ std::vector<double> get_heights(SEXP sxpHandle){
 }
 
 
-std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> heights){
+std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> &heights){
 
 	SEXP sxpRaster, sxpNoDataValue;
 	std::vector<int> idxMissing;
@@ -129,17 +130,12 @@ std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> heights){
 	returns a double, so it is assumed that RGDAL_GetBandNoDataValue returns a
 	REALSXP.
 	*/
-	sxpRaster = RGDAL_getRasterBand(sxpHandle, 1);
+	sxpRaster = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1));
 	sxpNoDataValue = RGDAL_GetBandNoDataValue(sxpRaster);
 	ndv = Rf_asReal(sxpNoDataValue);
 
 	// Search heights for all occurrances of ndv.
-	// https://stackoverflow.com/questions/25846235/finding-the-indexes-of-all-occurrences-of-an-element-in-a-vector
-	std::vector<double>::iterator it = heights.begin();
-	while ((it = std::find_if(it, heights.end(), ndv)) != heights.end()){
-		idxMissing.push_back(std::distance(heights.begin(), it)); // C indexing!
-		it++;
-	}
+	idxMissing = find_all(heights, ndv);
 
 	return idxMissing;
 }

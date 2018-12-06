@@ -6,36 +6,36 @@
 using namespace Rcpp;
 
 // test_get_coordinates
-SEXP test_get_coordinates(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_test_get_coordinates(SEXP sxpHandleSEXP) {
+Rcpp::NumericMatrix test_get_coordinates(Rcpp::S4 handle);
+RcppExport SEXP _localmaximas_test_get_coordinates(SEXP handleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_get_coordinates(sxpHandle));
+    Rcpp::traits::input_parameter< Rcpp::S4 >::type handle(handleSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_get_coordinates(handle));
     return rcpp_result_gen;
 END_RCPP
 }
 // test_get_heights
-SEXP test_get_heights(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_test_get_heights(SEXP sxpHandleSEXP) {
+Rcpp::NumericVector test_get_heights(Rcpp::S4 handle);
+RcppExport SEXP _localmaximas_test_get_heights(SEXP handleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_get_heights(sxpHandle));
+    Rcpp::traits::input_parameter< Rcpp::S4 >::type handle(handleSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_get_heights(handle));
     return rcpp_result_gen;
 END_RCPP
 }
 // test_index_missing
-SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights);
-RcppExport SEXP _localmaximas_test_index_missing(SEXP sxpHandleSEXP, SEXP sxpHeightsSEXP) {
+Rcpp::IntegerVector test_index_missing(Rcpp::S4 handle, Rcpp::NumericVector rcppHeights);
+RcppExport SEXP _localmaximas_test_index_missing(SEXP handleSEXP, SEXP rcppHeightsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    Rcpp::traits::input_parameter< SEXP >::type sxpHeights(sxpHeightsSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_index_missing(sxpHandle, sxpHeights));
+    Rcpp::traits::input_parameter< Rcpp::S4 >::type handle(handleSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type rcppHeights(rcppHeightsSEXP);
+    rcpp_result_gen = Rcpp::wrap(test_index_missing(handle, rcppHeights));
     return rcpp_result_gen;
 END_RCPP
 }
