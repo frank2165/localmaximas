@@ -9,9 +9,9 @@ extern "C" {
 */
 
 
-Rcpp::NumericMatrix test_get_coordinates(Rcpp::S4 handle);
-Rcpp::NumericVector test_get_heights(Rcpp::S4 handle);
-Rcpp::IntegerVector test_index_missing(Rcpp:: S4 handle, Rcpp::NumericVector sxpHeights);
+SEXP test_get_coordinates(SEXP sxpHandle);
+SEXP test_get_heights(SEXP sxpHandle);
+SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights);
 
 
 /*

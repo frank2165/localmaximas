@@ -15,61 +15,63 @@ extern "C"{
 */
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix test_get_coordinates(Rcpp::S4 handle){
+SEXP test_get_coordinates(SEXP sxpHandle){
+
+	Rprintf("Starting test_get_coordinates\n");
 
 	SEXP sxpPts;
-	Rcpp::NumericMatrix rcppPts;
 	int rows, cols;
-	SEXP sxpHandle = Rcpp::wrap(handle);
 	ANNpointArray pts = get_coordinates(sxpHandle);
 
+	Rprintf("Got coordinates\n");
 
 	rows = sizeof(pts) / sizeof(pts[0]);
 	cols = sizeof(pts[0]) / sizeof(pts[0][0]);
+
+	Rprintf("rows: %i, cols: %i \n", rows, cols);
+
 	sxpPts = Rf_protect(Rf_allocVector(REALSXP, rows * cols));
 
 	for (int j = 0; j < cols; j++){
 		for (int i = 0; i < rows; i++){
-			REAL(sxpPts)[i + rows*j] = pts[i][j];
+			REAL(sxpPts)[i + rows*j] = pts[j][i]; //column major order?
 		}
 	}
 
-	rcppPts = Rcpp::as<Rcpp::NumericMatrix>(sxpPts);
+	Rprintf("Assigned points to SEXP\n");
 
 	Rf_unprotect(1);
-	return rcppPts;
+	return sxpPts;
 }
 
 // [[Rcpp::export]]
-Rcpp::NumericVector test_get_heights(Rcpp::S4 handle){
+SEXP test_get_heights(SEXP sxpHandle){
+
+	Rprintf("Starting test_get_heights\n");
 
 	SEXP sxpHeights;
-	Rcpp::NumericVector rcppHeights;
-	
-	SEXP sxpHandle = Rcpp::wrap(handle);
 	std::vector<double> heights = get_heights(sxpHandle);
 	sxpHeights = Rcpp::wrap(heights);
 
-	rcppHeights = Rcpp::as<Rcpp::NumericVector>(sxpHeights);
-	return rcppHeights;
+	return sxpHeights;
 }
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector test_index_missing(Rcpp::S4 handle, Rcpp::NumericVector rcppHeights){
+SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights){
+
+	Rprintf("Starting test_index_missing\n");
 
 	SEXP sxpIndex;
-	Rcpp::IntegerVector rcppIndex;
+	Rcpp::NumericVector rcppHeights = Rcpp::wrap(sxpHeights);
 	std::vector<double> heights = Rcpp::as<std::vector<double>>(rcppHeights);
 	std::vector<int> idx;
 
-	// Wrap handle
-	SEXP sxpHandle = Rcpp::wrap(handle);
+	Rprintf("Running index_missing\n");
 
 	idx = index_missing(sxpHandle, heights);
 	sxpIndex = Rcpp::wrap(idx);
-	rcppIndex = Rcpp::as<Rcpp::IntegerVector>(sxpIndex);
 
-	return rcppIndex;
+	return sxpIndex;
 }
 
 //Rcpp::List test_frNN_search(Rcpp::NumericMatrix points){}
