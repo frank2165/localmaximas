@@ -1,6 +1,9 @@
 
-
-tif <- "veg_height.tif"
+wd <- getwd()
+tif <- "HQP_2017_C2_479000_7018000_chm_25cm.tif"
+if(basename(wd) == "localmaximas"){
+    tif <- paste("tests", tif, sep = "/")
+}
 
 
 library(rgdal)
@@ -10,23 +13,15 @@ library(localmaximas)
 
 file <- GDAL.open(tif)
 
-
-localmaximas.dlls <- getLoadedDLLs() %>% extract("localmaximas") %>% 
-    unlist %>% extract2("localmaximas.filepath")
-
-getDLLRegisteredRoutines(localmaximas.dll)
-    
-
-
 # test_get_coordinates
-coords <- .Call("_localmaximas_test_get_coordinates", PACKAGE = "localmaximas", file)
+coords <- localmaximas:::test_get_coordinates(file)
 
 
 # test_get_heights
-heights <- .Call("_localmaximas_test_get_heights", PACKAGE = "localmaximas", file)
+heights <- localmaximas:::test_get_heights(file)
 
 
 # test_index_missing
-idx <- .Call("_localmaximas_test_index_missing", PACKAGE = "localmaximas", file, heights)
+idx <- localmaximas:::test_index_missing(file, heights)
 
 
