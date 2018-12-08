@@ -17,56 +17,51 @@ extern "C"{
 // [[Rcpp::export]]
 SEXP test_get_coordinates(SEXP sxpHandle){
 
-	Rprintf("Starting test_get_coordinates\n");
-
 	SEXP sxpPts;
 	int rows, cols;
 	ANNpointArray pts = get_coordinates(sxpHandle);
 
-	Rprintf("Got coordinates\n");
 
 	rows = sizeof(pts) / sizeof(pts[0]);
 	cols = sizeof(pts[0]) / sizeof(pts[0][0]);
-
-	Rprintf("rows: %i, cols: %i \n", rows, cols);
-
-	sxpPts = Rf_protect(Rf_allocVector(REALSXP, rows * cols));
+	sxpPts = Rf_protect(Rf_allocMatrix(REALSXP, rows, cols));
 
 	for (int j = 0; j < cols; j++){
 		for (int i = 0; i < rows; i++){
-			REAL(sxpPts)[i + rows*j] = pts[j][i]; //column major order?
+			REAL(sxpPts)[i + rows*j] = pts[i][j];
 		}
 	}
-
-	Rprintf("Assigned points to SEXP\n");
 
 	Rf_unprotect(1);
 	return sxpPts;
 }
 
+
 // [[Rcpp::export]]
 SEXP test_get_heights(SEXP sxpHandle){
 
-	Rprintf("Starting test_get_heights\n");
-
 	SEXP sxpHeights;
+    
 	std::vector<double> heights = get_heights(sxpHandle);
 	sxpHeights = Rcpp::wrap(heights);
 
 	return sxpHeights;
 }
 
+
 // [[Rcpp::export]]
 SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights){
 
-	Rprintf("Starting test_index_missing\n");
-
+    // Rf_xlen_t is a typedef for ptrdiff_t
+    
 	SEXP sxpIndex;
-	Rcpp::NumericVector rcppHeights = Rcpp::wrap(sxpHeights);
-	std::vector<double> heights = Rcpp::as<std::vector<double>>(rcppHeights);
+    R_xlen_t numPts = Rf_length(sxpHeights);
+	std::vector<double> heights(numPts);
 	std::vector<int> idx;
-
-	Rprintf("Running index_missing\n");
+	
+	for(int i = 0; i < numPts; i++){
+	    heights[i] = REAL(sxpHeights)[i];
+	}
 
 	idx = index_missing(sxpHandle, heights);
 	sxpIndex = Rcpp::wrap(idx);

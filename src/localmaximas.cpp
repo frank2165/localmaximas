@@ -28,11 +28,12 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 	NumPts = XSize * YSize;
 
 
-	Rprintf("XSize: %i, YSize: %i\n", XSize, YSize);
-
-
 	// Get coordinate information GDALReadOnlyDataset
+	SEXP sxpAttr = Rf_mkChar("CE_Failure");
 	sxpGt = RGDAL_GetGeoTransform(sxpHandle);
+	if (Rf_getAttrib(sxpGt, sxpAttr)){
+		Rcpp::stop("Could not get attributes from dataset handle!");
+	}
 
 
 	// Set coordinate information
@@ -42,15 +43,9 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 	res_y = REAL(sxpGt)[4];
 
 
-	Rprintf("res_x: %g, res_y: %g\n", res_x, res_y);
-
-
-
 	// Set origin coordinates to be the centroid of the first pixel
 	origin_x += res_x / 2;
 	origin_y += res_y / 2;
-
-	Rprintf("origin_x_x: %g, origin_y: %g\n", origin_x, origin_y);
 
 
 	// Allocate storage for coordinates
@@ -72,9 +67,6 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 		}
 	}
 
-
-	Rprintf("Assigned coordinates to each point\n");
-
 	return centres;
 }
 
@@ -94,13 +86,10 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	YSize = Rf_asInteger(sxpYSize);
 	numPts = XSize * YSize;
 
-	Rprintf("XSize: %i, YSize: %i\n", XSize, YSize);
-	
-
 	// Set RGDAL_GetRasterData args
 	SEXP sxpOffset = Rf_protect(Rf_allocVector(REALSXP, 2));
-	SEXP sxpDimReg = Rf_protect(Rf_allocVector(INTSXP, 2));
-	SEXP sxpDimOut = Rf_protect(Rf_allocVector(INTSXP, 2));
+	SEXP sxpDimReg = Rf_protect(Rf_allocVector(REALSXP, 2));
+	SEXP sxpDimOut = Rf_protect(Rf_allocVector(REALSXP, 2));
 	SEXP sxpInterleave = Rf_protect(Rf_allocVector(REALSXP, 2));
 
 	memset(REAL(sxpOffset), 0, 2 * sizeof(double));
@@ -111,15 +100,9 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	sxpDimOut = sxpDimReg;
 
 
-	Rprintf("Got Raster Data args\n");
-
-
 	// Read raster data
-	sxpRaster  = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(0));
+	sxpRaster  = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1));
 	sxpHeights = RGDAL_GetRasterData(sxpRaster, sxpDimReg, sxpDimOut, sxpInterleave);
-
-
-	Rprintf("Got heights from Raster Band\n");
 
 
 	// Store heights in output std::vector<double>
@@ -157,15 +140,8 @@ std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> &heights){
 	return idxMissing;
 }
 
-/*
-std::vector<std::vector<int>> frNN_search(ANNpointArray points, int numPts){
 
-	// Create kd-tree
-	ANNkdtree kdTree = new ANNkd_tree(points, numPts, 2); // Always going to be 2d
-
-}
-
-*/
+//std::vector<std::vector<int>> frNN_search(ANNpointArray points){}
 
 #ifdef __cplusplus
 }
