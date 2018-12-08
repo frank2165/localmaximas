@@ -15,18 +15,16 @@ extern "C"{
 */
 
 // [[Rcpp::export]]
-Rcpp::NumericMatrix test_get_coordinates(Rcpp::S4 handle){
+SEXP test_get_coordinates(SEXP sxpHandle){
 
 	SEXP sxpPts;
-	Rcpp::NumericMatrix rcppPts;
 	int rows, cols;
-	SEXP sxpHandle = Rcpp::wrap(handle);
 	ANNpointArray pts = get_coordinates(sxpHandle);
 
 
 	rows = sizeof(pts) / sizeof(pts[0]);
 	cols = sizeof(pts[0]) / sizeof(pts[0][0]);
-	sxpPts = Rf_protect(Rf_allocVector(REALSXP, rows * cols));
+	sxpPts = Rf_protect(Rf_allocMatrix(REALSXP, rows, cols));
 
 	for (int j = 0; j < cols; j++){
 		for (int i = 0; i < rows; i++){
@@ -34,42 +32,41 @@ Rcpp::NumericMatrix test_get_coordinates(Rcpp::S4 handle){
 		}
 	}
 
-	rcppPts = Rcpp::as<Rcpp::NumericMatrix>(sxpPts);
-
 	Rf_unprotect(1);
-	return rcppPts;
+	return sxpPts;
 }
 
+
 // [[Rcpp::export]]
-Rcpp::NumericVector test_get_heights(Rcpp::S4 handle){
+SEXP test_get_heights(SEXP sxpHandle){
 
 	SEXP sxpHeights;
-	Rcpp::NumericVector rcppHeights;
-	
-	SEXP sxpHandle = Rcpp::wrap(handle);
+    
 	std::vector<double> heights = get_heights(sxpHandle);
 	sxpHeights = Rcpp::wrap(heights);
 
-	rcppHeights = Rcpp::as<Rcpp::NumericVector>(sxpHeights);
-	return rcppHeights;
+	return sxpHeights;
 }
 
+
 // [[Rcpp::export]]
-Rcpp::IntegerVector test_index_missing(Rcpp::S4 handle, Rcpp::NumericVector rcppHeights){
+SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights){
 
+    // Rf_xlen_t is a typedef for ptrdiff_t
+    
 	SEXP sxpIndex;
-	Rcpp::IntegerVector rcppIndex;
-	std::vector<double> heights = Rcpp::as<std::vector<double>>(rcppHeights);
+    R_xlen_t numPts = Rf_length(sxpHeights);
+	std::vector<double> heights(numPts);
 	std::vector<int> idx;
-
-	// Wrap handle
-	SEXP sxpHandle = Rcpp::wrap(handle);
+	
+	for(int i = 0; i < numPts; i++){
+	    heights[i] = REAL(sxpHeights)[i];
+	}
 
 	idx = index_missing(sxpHandle, heights);
 	sxpIndex = Rcpp::wrap(idx);
-	rcppIndex = Rcpp::as<Rcpp::IntegerVector>(sxpIndex);
 
-	return rcppIndex;
+	return sxpIndex;
 }
 
 //Rcpp::List test_frNN_search(Rcpp::NumericMatrix points){}
