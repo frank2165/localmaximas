@@ -3,5 +3,5 @@
 }
 
 .onUnload <- function(libpath) {
-    library.dynam.unload('localmaximas', pkg, lib)
+    library.dynam.unload('localmaximas', libpath)
 }
