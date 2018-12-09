@@ -17,18 +17,26 @@ extern "C"{
 // [[Rcpp::export]]
 SEXP test_get_coordinates(SEXP sxpHandle){
 
+    Rprintf("test_get_coordinates\n");
+    
 	SEXP sxpPts;
-	int rows, cols;
-	ANNpointArray pts = get_coordinates(sxpHandle);
+    centroids pts = get_coordinates(sxpHandle);
+    
+    Rprintf("Assigning rows and pA\n");
+    
+	int rows = pts.numPts;
+	ANNpointArray pA = pts.centres;
+	
+	Rprintf("rows: %i \n", rows);
+	
+	sxpPts = Rf_protect(Rf_allocMatrix(REALSXP, rows, 2));
+	
+	Rprintf("sxpPts allocated\n");
 
 
-	rows = sizeof(pts) / sizeof(pts[0]);
-	cols = sizeof(pts[0]) / sizeof(pts[0][0]);
-	sxpPts = Rf_protect(Rf_allocMatrix(REALSXP, rows, cols));
-
-	for (int j = 0; j < cols; j++){
+	for (int j = 0; j < 2; j++){
 		for (int i = 0; i < rows; i++){
-			REAL(sxpPts)[i + rows*j] = pts[i][j];
+			REAL(sxpPts)[i + rows*j] = pA[i][j];
 		}
 	}
 

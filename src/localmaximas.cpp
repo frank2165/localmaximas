@@ -11,13 +11,16 @@ extern "C" {
 #endif
 
 
-ANNpointArray get_coordinates(SEXP sxpHandle){
+centroids get_coordinates(SEXP sxpHandle){
 
+    Rprintf("get_coordinates\n");
+    
+    centroids points;
+    ANNpointArray centres;
 	SEXP sxpGt, sxpXSize, sxpYSize;
-	int XSize = 0, YSize = 0, NumPts = 0;
+	int XSize = 0, YSize = 0, numPts = 0;
 	double res_x = 0.0, res_y = 0.0;
 	double origin_x = 0.0, origin_y = 0.0;
-	ANNpointArray centres;
 
 
 	// Get XSize and YSize for GDALReadOnlyDataset
@@ -25,31 +28,34 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 	sxpYSize = RGDAL_GetRasterYSize(sxpHandle);
 	XSize = Rf_asInteger(sxpXSize);
 	YSize = Rf_asInteger(sxpYSize);
-	NumPts = XSize * YSize;
+	numPts = XSize * YSize;
 
+	Rprintf("XSize: %i, YSize: %i \n", XSize, YSize);
+	Rprintf("numPts: %i \n", numPts);
+	
 
 	// Get coordinate information GDALReadOnlyDataset
-	SEXP sxpAttr = Rf_mkChar("CE_Failure");
 	sxpGt = RGDAL_GetGeoTransform(sxpHandle);
-	if (Rf_getAttrib(sxpGt, sxpAttr)){
-		Rcpp::stop("Could not get attributes from dataset handle!");
-	}
 
 
 	// Set coordinate information
 	origin_x = REAL(sxpGt)[0];
 	origin_y = REAL(sxpGt)[3];
 	res_x = REAL(sxpGt)[1];
-	res_y = REAL(sxpGt)[4];
+	res_y = REAL(sxpGt)[5];
+	
+	Rprintf("res_x: %g, res_y: %g \n", res_x, res_y);
 
 
 	// Set origin coordinates to be the centroid of the first pixel
 	origin_x += res_x / 2;
 	origin_y += res_y / 2;
+	
+	Rprintf("origin_x: %g, origin_y: %g \n", origin_x, origin_y);
 
 
 	// Allocate storage for coordinates
-	centres = annAllocPts(NumPts, 2);
+	centres = annAllocPts(numPts, 2);
 
 
 	// Assign coordinates to each point
@@ -66,13 +72,18 @@ ANNpointArray get_coordinates(SEXP sxpHandle){
 			centres[pt_idx][1] = origin_y + linedbl * res_y;
 		}
 	}
+	
+	points.centres = centres;
+	points.numPts = numPts;
 
-	return centres;
+	return points;
 }
 
 
 std::vector<double> get_heights(SEXP sxpHandle){
 
+    Rprintf("get_heights\n");
+    
 	SEXP sxpRaster, sxpHeights;
 	SEXP sxpXSize, sxpYSize;
 	int XSize, YSize, numPts;
@@ -85,11 +96,14 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	XSize = Rf_asInteger(sxpXSize);
 	YSize = Rf_asInteger(sxpYSize);
 	numPts = XSize * YSize;
+	
+	Rprintf("XSize: %i, YSize: %i \n", XSize, YSize);
+	
 
 	// Set RGDAL_GetRasterData args
 	SEXP sxpOffset = Rf_protect(Rf_allocVector(REALSXP, 2));
-	SEXP sxpDimReg = Rf_protect(Rf_allocVector(REALSXP, 2));
-	SEXP sxpDimOut = Rf_protect(Rf_allocVector(REALSXP, 2));
+	SEXP sxpDimReg = Rf_protect(Rf_allocVector(INTSXP, 2));
+	SEXP sxpDimOut = Rf_protect(Rf_allocVector(INTSXP, 2));
 	SEXP sxpInterleave = Rf_protect(Rf_allocVector(REALSXP, 2));
 
 	memset(REAL(sxpOffset), 0, 2 * sizeof(double));
@@ -101,6 +115,7 @@ std::vector<double> get_heights(SEXP sxpHandle){
 
 
 	// Read raster data
+	Rprintf("Attempting to read Raster Band \n");
 	sxpRaster  = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1));
 	sxpHeights = RGDAL_GetRasterData(sxpRaster, sxpDimReg, sxpDimOut, sxpInterleave);
 
