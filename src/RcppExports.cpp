@@ -5,39 +5,6 @@
 
 using namespace Rcpp;
 
-// test_get_coordinates
-SEXP test_get_coordinates(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_test_get_coordinates(SEXP sxpHandleSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_get_coordinates(sxpHandle));
-    return rcpp_result_gen;
-END_RCPP
-}
-// test_get_heights
-SEXP test_get_heights(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_test_get_heights(SEXP sxpHandleSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_get_heights(sxpHandle));
-    return rcpp_result_gen;
-END_RCPP
-}
-// test_index_missing
-SEXP test_index_missing(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_test_index_missing(SEXP sxpHandleSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(test_index_missing(sxpHandle));
-    return rcpp_result_gen;
-END_RCPP
-}
 // R_maxima_search
 IntegerVector R_maxima_search(NumericMatrix xy, NumericVector z, double eps);
 RcppExport SEXP _localmaximas_R_maxima_search(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
@@ -51,12 +18,33 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// localmaximas_get_coordinates
+SEXP localmaximas_get_coordinates(SEXP sxpHandle);
+RcppExport SEXP _localmaximas_localmaximas_get_coordinates(SEXP sxpHandleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
+    rcpp_result_gen = Rcpp::wrap(localmaximas_get_coordinates(sxpHandle));
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_heights
+Rcpp::NumericVector get_heights(SEXP sxpHandle);
+RcppExport SEXP _localmaximas_get_heights(SEXP sxpHandleSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_heights(sxpHandle));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_localmaximas_test_get_coordinates", (DL_FUNC) &_localmaximas_test_get_coordinates, 1},
-    {"_localmaximas_test_get_heights", (DL_FUNC) &_localmaximas_test_get_heights, 1},
-    {"_localmaximas_test_index_missing", (DL_FUNC) &_localmaximas_test_index_missing, 1},
     {"_localmaximas_R_maxima_search", (DL_FUNC) &_localmaximas_R_maxima_search, 3},
+    {"_localmaximas_localmaximas_get_coordinates", (DL_FUNC) &_localmaximas_localmaximas_get_coordinates, 1},
+    {"_localmaximas_get_heights", (DL_FUNC) &_localmaximas_get_heights, 1},
     {NULL, NULL, 0}
 };
 

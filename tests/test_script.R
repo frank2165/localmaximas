@@ -14,14 +14,10 @@ library(localmaximas)
 file <- GDAL.open(tif)
 
 # test_get_coordinates
-coords <- localmaximas:::test_get_coordinates(file)
+coords <- localmaximas:::localmaximas_get_coordinates(file)
 
 
 # test_get_heights
-heights <- localmaximas:::test_get_heights(file)
-
-
-# test_index_missing
-idx <- localmaximas:::test_index_missing(file, heights)
+heights <- localmaximas:::get_heights(file)
 
 
