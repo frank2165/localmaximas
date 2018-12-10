@@ -56,6 +56,7 @@ centroids get_coordinates(SEXP sxpHandle){
 
 	// Allocate storage for coordinates
 	centres = annAllocPts(numPts, 2);
+	Rprintf("Memory allocated for ANNpointArray: %p\n", centres);
 
 
 	// Assign coordinates to each point
@@ -73,6 +74,7 @@ centroids get_coordinates(SEXP sxpHandle){
 		}
 	}
 	
+	Rprintf("Assigning members to struct: %p\n", &points);
 	points.centres = centres;
 	points.numPts = numPts;
 
@@ -84,7 +86,7 @@ std::vector<double> get_heights(SEXP sxpHandle){
 
     Rprintf("get_heights\n");
     
-	SEXP sxpRaster, sxpHeights;
+	SEXP sxpRasterPtr, sxpHeights;
 	SEXP sxpXSize, sxpYSize;
 	int XSize, YSize, numPts;
 	std::vector<double> heights;
@@ -101,24 +103,34 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	
 
 	// Set RGDAL_GetRasterData args
-	SEXP sxpOffset = Rf_protect(Rf_allocVector(REALSXP, 2));
-	SEXP sxpDimReg = Rf_protect(Rf_allocVector(INTSXP, 2));
+	SEXP sxpDimReg = Rf_protect(Rf_allocVector(INTSXP, 4));
 	SEXP sxpDimOut = Rf_protect(Rf_allocVector(INTSXP, 2));
-	SEXP sxpInterleave = Rf_protect(Rf_allocVector(REALSXP, 2));
+	SEXP sxpInterleave = Rf_protect(Rf_allocVector(INTSXP, 2));
 
-	memset(REAL(sxpOffset), 0, 2 * sizeof(double));
-	memset(REAL(sxpInterleave), 0, 2 * sizeof(double));
+	memset(INTEGER(sxpInterleave), 0, 2 * sizeof(int));
 
-	INTEGER(sxpDimReg)[0] = XSize;
-	INTEGER(sxpDimReg)[1] = YSize;
-	sxpDimOut = sxpDimReg;
+	INTEGER(sxpDimReg)[0] = 0;
+	INTEGER(sxpDimReg)[1] = 0;
+	INTEGER(sxpDimReg)[3] = XSize;
+	INTEGER(sxpDimReg)[2] = YSize;
+	INTEGER(sxpDimOut)[1] = XSize;
+	INTEGER(sxpDimOut)[0] = YSize;
 
 
 	// Read raster data
-	Rprintf("Attempting to read Raster Band \n");
-	sxpRaster  = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1));
-	sxpHeights = RGDAL_GetRasterData(sxpRaster, sxpDimReg, sxpDimOut, sxpInterleave);
+	Rprintf("RGDAL_GetRasterBand\n");
+	sxpRasterPtr = Rf_protect(RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1)));
+	Rf_PrintValue(sxpRasterPtr);
 
+	Rcpp::S4 sxpGDALRasterBand("GDALRasterBand");
+	Rf_PrintValue(sxpGDALRasterBand);
+
+	sxpGDALRasterBand.slot("handle") = sxpRasterPtr;
+	Rf_PrintValue(sxpGDALRasterBand);
+
+	Rprintf("RGDAL_GetRasterData\n");
+	sxpHeights = Rf_protect(RGDAL_GetRasterData(sxpGDALRasterBand, sxpDimReg, sxpDimOut, sxpInterleave));
+	Rf_PrintValue(sxpHeights);
 
 	// Store heights in output std::vector<double>
 	heights.resize(numPts);
@@ -128,14 +140,14 @@ std::vector<double> get_heights(SEXP sxpHandle){
 	}
 
 
-	Rf_unprotect(4);
+	Rf_unprotect(5);
 	return heights;
 }
 
 
 std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> &heights){
 
-	SEXP sxpRaster, sxpNoDataValue;
+	SEXP sxpRasterPtr, sxpNoDataValue;
 	std::vector<int> idxMissing;
 	double ndv;
 
@@ -145,13 +157,21 @@ std::vector<int> index_missing(SEXP sxpHandle, std::vector<double> &heights){
 	returns a double, so it is assumed that RGDAL_GetBandNoDataValue returns a
 	REALSXP.
 	*/
-	sxpRaster = RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1));
-	sxpNoDataValue = RGDAL_GetBandNoDataValue(sxpRaster);
+	Rprintf("RGDAL_GetRasterBand\n");
+	sxpRasterPtr = Rf_protect(RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1)));
+	Rcpp::S4 sxpGDALRasterBand("GDALRasterBand");
+	sxpGDALRasterBand.slot("handle") = sxpRasterPtr;
+
+
+	sxpNoDataValue = Rf_protect(RGDAL_GetBandNoDataValue(sxpGDALRasterBand));
 	ndv = Rf_asReal(sxpNoDataValue);
+	Rprintf("ndv = %g", ndv);
 
 	// Search heights for all occurrances of ndv.
 	idxMissing = find_all(heights, ndv);
 
+
+	Rf_unprotect(2);
 	return idxMissing;
 }
 

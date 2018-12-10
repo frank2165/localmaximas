@@ -27,6 +27,7 @@ SEXP test_get_coordinates(SEXP sxpHandle){
 	int rows = pts.numPts;
 	ANNpointArray pA = pts.centres;
 	
+	Rprintf("Returned ANNpointArray: %p\n", pA);
 	Rprintf("rows: %i \n", rows);
 	
 	sxpPts = Rf_protect(Rf_allocMatrix(REALSXP, rows, 2));
@@ -45,6 +46,8 @@ SEXP test_get_coordinates(SEXP sxpHandle){
 }
 
 
+
+
 // [[Rcpp::export]]
 SEXP test_get_heights(SEXP sxpHandle){
 
@@ -57,19 +60,23 @@ SEXP test_get_heights(SEXP sxpHandle){
 }
 
 
+
+
 // [[Rcpp::export]]
-SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights){
+SEXP test_index_missing(SEXP sxpHandle){
 
     // Rf_xlen_t is a typedef for ptrdiff_t
     
 	SEXP sxpIndex;
-    R_xlen_t numPts = Rf_length(sxpHeights);
-	std::vector<double> heights(numPts);
 	std::vector<int> idx;
+	std::vector<double> heights = get_heights(sxpHandle);
 	
-	for(int i = 0; i < numPts; i++){
-	    heights[i] = REAL(sxpHeights)[i];
+	Rprintf("heights = {");
+	for (int i = 0; i < heights.size(); i++){
+		Rprintf(" %g ", heights[i]);
 	}
+	Rprintf("}\n");
+
 
 	idx = index_missing(sxpHandle, heights);
 	sxpIndex = Rcpp::wrap(idx);
@@ -78,6 +85,7 @@ SEXP test_index_missing(SEXP sxpHandle, SEXP sxpHeights){
 }
 
 //Rcpp::List test_frNN_search(Rcpp::NumericMatrix points){}
+
 
 /*
 #ifdef __cplusplus
