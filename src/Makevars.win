@@ -8,8 +8,6 @@ TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
 
 PKG_CPPFLAGS =\
   -I$(RWINLIB)/include/gdal \
-  -I$(RWINLIB)/include/geos \
-  -I$(RWINLIB)/include/proj \
   -IANN \
   -I.
 
