@@ -1,7 +1,7 @@
 Package: localmaximas
 Type: Package
 Title: Identifies locally maximal points in a Canopy Height Map
-Version: 0.1.0
+Version: 0.1.0-9999
 Date: 2018-11-30
 Author: Marc Fletcher
 Maintainer: Marc Fletcher <Marc.Fletcher@hqplantations.com.au>
