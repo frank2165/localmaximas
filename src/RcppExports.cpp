@@ -5,27 +5,27 @@
 
 using namespace Rcpp;
 
-// R_maxima_search
-IntegerVector R_maxima_search(NumericMatrix xy, NumericVector z, double eps);
-RcppExport SEXP _localmaximas_R_maxima_search(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
+// frNN_search
+Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, NumericVector z, double eps);
+RcppExport SEXP _localmaximas_frNN_search(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< NumericMatrix >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type xy(xySEXP);
     Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(R_maxima_search(xy, z, eps));
+    rcpp_result_gen = Rcpp::wrap(frNN_search(xy, z, eps));
     return rcpp_result_gen;
 END_RCPP
 }
-// localmaximas_get_coordinates
-SEXP localmaximas_get_coordinates(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_localmaximas_get_coordinates(SEXP sxpHandleSEXP) {
+// get_coordinates
+Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle);
+RcppExport SEXP _localmaximas_get_coordinates(SEXP sxpHandleSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(localmaximas_get_coordinates(sxpHandle));
+    rcpp_result_gen = Rcpp::wrap(get_coordinates(sxpHandle));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -42,8 +42,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_localmaximas_R_maxima_search", (DL_FUNC) &_localmaximas_R_maxima_search, 3},
-    {"_localmaximas_localmaximas_get_coordinates", (DL_FUNC) &_localmaximas_localmaximas_get_coordinates, 1},
+    {"_localmaximas_frNN_search", (DL_FUNC) &_localmaximas_frNN_search, 3},
+    {"_localmaximas_get_coordinates", (DL_FUNC) &_localmaximas_get_coordinates, 1},
     {"_localmaximas_get_heights", (DL_FUNC) &_localmaximas_get_heights, 1},
     {NULL, NULL, 0}
 };
