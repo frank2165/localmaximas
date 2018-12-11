@@ -7,17 +7,28 @@ if(basename(wd) == "localmaximas"){
 
 
 library(rgdal)
-library(magrittr)
 library(localmaximas)
 
 
 file <- GDAL.open(tif)
 
-# test_get_coordinates
-coords <- localmaximas:::localmaximas_get_coordinates(file)
+system.time({
+    # test_get_coordinates
+    coords <- localmaximas:::get_coordinates(file)
+    
+    
+    # test_get_heights
+    heights <- localmaximas:::get_heights(file)
+    
+    
+    # Remove points with missing values
+    idx.missing <- which(is.na(heights))
+    heights <- heights[-idx.missing]
+    coords  <- coords[-idx.missing, ]
+    
+    
+    # frNN_search
+    nn <- localmaximas:::frNN_search(coords, heights, 1.5)
+})
 
-
-# test_get_heights
-heights <- localmaximas:::get_heights(file)
-
-
+gc()
