@@ -44,8 +44,11 @@ Rcpp::NumericVector get_heights(SEXP sxpHandle){
 	sxpHeights = Rf_protect(RGDAL_GetRasterData(sxpGDALRasterBand, sxpDimReg, sxpDimOut, sxpInterleave));
 
 
-	// Convert REALSXP to Rcpp::NumericVector
+	// Convert REALSXP to Rcpp::NumericVector, strip dimension attribute (if it exists)
 	heights = Rcpp::wrap(sxpHeights);
+	if (heights.hasAttribute("dim")){
+		heights.attr("dim") = R_NilValue;
+	}
 
 	Rf_unprotect(5);
 	return sxpHeights;

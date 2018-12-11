@@ -1,13 +1,11 @@
 
 #include "localmaximas.h"
 
+//[[Rcpp::export]]
+Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle) {
 
-centroids get_coordinates(SEXP sxpHandle) {
-
-	centroids points;
-	ANNpointArray centres;
 	SEXP sxpGt, sxpXSize, sxpYSize;
-	int XSize = 0, YSize = 0, numPts = 0;
+	int XSize = 0, YSize = 0;
 	double res_x = 0.0, res_y = 0.0;
 	double origin_x = 0.0, origin_y = 0.0;
 
@@ -17,7 +15,6 @@ centroids get_coordinates(SEXP sxpHandle) {
 	sxpYSize = RGDAL_GetRasterYSize(sxpHandle);
 	XSize = Rf_asInteger(sxpXSize);
 	YSize = Rf_asInteger(sxpYSize);
-	numPts = XSize * YSize;
 
 
 	// Get coordinate information GDALReadOnlyDataset
@@ -37,7 +34,7 @@ centroids get_coordinates(SEXP sxpHandle) {
 
 
 	// Allocate storage for coordinates
-	centres = annAllocPts(numPts, 2);
+	Rcpp::NumericMatrix centres(XSize*YSize, 2);
 
 
 	// Assign coordinates to each point
@@ -50,36 +47,10 @@ centroids get_coordinates(SEXP sxpHandle) {
 			pt_idx = pixel + line * XSize;
 			pixeldbl = (double)pixel;
 
-			centres[pt_idx][0] = origin_x + pixeldbl * res_x;
-			centres[pt_idx][1] = origin_y + linedbl * res_y;
+			centres(pt_idx, 0) = origin_x + pixeldbl * res_x;
+			centres(pt_idx, 1) = origin_y + linedbl * res_y;
 		}
 	}
 
-	points.centres = centres;
-	points.numPts = numPts;
-
-	return points;
-}
-
-
-// [[Rcpp::export]]
-SEXP localmaximas_get_coordinates(SEXP sxpHandle) {
-
-	SEXP sxpPts;
-	centroids pts = get_coordinates(sxpHandle);
-
-	int rows = pts.numPts;
-	ANNpointArray pA = pts.centres;
-
-
-	sxpPts = Rf_protect(Rf_allocMatrix(REALSXP, rows, 2));
-
-	for (int j = 0; j < 2; j++) {
-		for (int i = 0; i < rows; i++) {
-			REAL(sxpPts)[i + rows * j] = pA[i][j];
-		}
-	}
-
-	Rf_unprotect(1);
-	return sxpPts;
+	return centres;
 }
