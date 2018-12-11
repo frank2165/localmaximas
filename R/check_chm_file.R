@@ -1,5 +1,10 @@
-
-
+#' Check attributes of .tif file
+#'
+#' @param handle object of class \linkS4class{GDALReadOnlyDataset}, created by
+#'   call to \code{\link[rgdal]{GDAL.open}}.
+#'
+#' @return NULL
+#' @import rgdal
 check_chm_file <- function(handle){
     info <- GDALinfo(handle, silent = TRUE, returnStats = FALSE)
     
