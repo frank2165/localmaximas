@@ -5,6 +5,18 @@
 
 using namespace Rcpp;
 
+// find_local_maxima
+Rcpp::List find_local_maxima(Rcpp::CharacterVector files, double search_radius);
+RcppExport SEXP _localmaximas_find_local_maxima(SEXP filesSEXP, SEXP search_radiusSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type files(filesSEXP);
+    Rcpp::traits::input_parameter< double >::type search_radius(search_radiusSEXP);
+    rcpp_result_gen = Rcpp::wrap(find_local_maxima(files, search_radius));
+    return rcpp_result_gen;
+END_RCPP
+}
 // frNN_search
 Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, NumericVector z, double eps);
 RcppExport SEXP _localmaximas_frNN_search(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
@@ -19,29 +31,30 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_coordinates
-Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_get_coordinates(SEXP sxpHandleSEXP) {
+Rcpp::NumericMatrix get_coordinates(SEXP sxpFile);
+RcppExport SEXP _localmaximas_get_coordinates(SEXP sxpFileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_coordinates(sxpHandle));
+    Rcpp::traits::input_parameter< SEXP >::type sxpFile(sxpFileSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_coordinates(sxpFile));
     return rcpp_result_gen;
 END_RCPP
 }
 // get_heights
-Rcpp::NumericVector get_heights(SEXP sxpHandle);
-RcppExport SEXP _localmaximas_get_heights(SEXP sxpHandleSEXP) {
+Rcpp::NumericVector get_heights(SEXP sxpFile);
+RcppExport SEXP _localmaximas_get_heights(SEXP sxpFileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpHandle(sxpHandleSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_heights(sxpHandle));
+    Rcpp::traits::input_parameter< SEXP >::type sxpFile(sxpFileSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_heights(sxpFile));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_localmaximas_find_local_maxima", (DL_FUNC) &_localmaximas_find_local_maxima, 2},
     {"_localmaximas_frNN_search", (DL_FUNC) &_localmaximas_frNN_search, 3},
     {"_localmaximas_get_coordinates", (DL_FUNC) &_localmaximas_get_coordinates, 1},
     {"_localmaximas_get_heights", (DL_FUNC) &_localmaximas_get_heights, 1},

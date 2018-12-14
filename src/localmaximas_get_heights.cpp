@@ -7,17 +7,29 @@ Functions for interacting with the GDAL C++ library
 
 
 //[[Rcpp::export]]
-Rcpp::NumericVector get_heights(SEXP sxpHandle){
-    
-	SEXP sxpRasterPtr, sxpHeights;
+Rcpp::NumericVector get_heights(SEXP sxpFile){
+
+	SEXP sxpHandle, sxpRasterPtr, sxpHeights;
 	SEXP sxpXSize, sxpYSize;
 	int XSize, YSize;
 	Rcpp::NumericVector heights;
 
 
+	// Open file connection
+	if (Rf_isNull(sxpFile)){
+		Rf_error("NULL filename passed to get_heights");
+	}
+
+	if (Rf_isString(sxpFile)){
+		Rf_error("Variable passed to get_heights was not a STRSXP");
+	}
+
+	sxpHandle = Rf_protect(RGDAL_OpenDataset(sxpFile, Rf_ScalarLogical(1), Rf_ScalarLogical(1), R_NilValue, R_NilValue));
+
+
 	// Get XSize and YSize
-	sxpXSize = RGDAL_GetRasterXSize(sxpHandle);
-	sxpYSize = RGDAL_GetRasterYSize(sxpHandle);
+	sxpXSize = Rf_protect(RGDAL_GetRasterXSize(sxpHandle));
+	sxpYSize = Rf_protect(RGDAL_GetRasterYSize(sxpHandle));
 	XSize = Rf_asInteger(sxpXSize);
 	YSize = Rf_asInteger(sxpYSize);
 	
@@ -50,7 +62,7 @@ Rcpp::NumericVector get_heights(SEXP sxpHandle){
 		heights.attr("dim") = R_NilValue;
 	}
 
-	Rf_unprotect(5);
+	Rf_unprotect(8);
 	return sxpHeights;
 }
 

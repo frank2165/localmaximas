@@ -2,23 +2,36 @@
 #include "localmaximas.h"
 
 //[[Rcpp::export]]
-Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle) {
+Rcpp::NumericMatrix get_coordinates(SEXP sxpFile) {
 
-	SEXP sxpGt, sxpXSize, sxpYSize;
+	SEXP sxpHandle, sxpGt, sxpXSize, sxpYSize;
 	int XSize = 0, YSize = 0;
 	double res_x = 0.0, res_y = 0.0;
 	double origin_x = 0.0, origin_y = 0.0;
 
 
+	// Open file connection
+	if (Rf_isNull(sxpFile)){
+		Rf_error("NULL filename passed to get_coordinates");
+	}
+
+	if (Rf_isString(sxpFile)){
+		Rf_error("Variable passed to get_coordinates was not a STRSXP");
+	}
+
+	sxpHandle = Rf_protect(RGDAL_OpenDataset(sxpFile, Rf_ScalarLogical(1), Rf_ScalarLogical(1), R_NilValue, R_NilValue));
+
+
+
 	// Get XSize and YSize for GDALReadOnlyDataset
-	sxpXSize = RGDAL_GetRasterXSize(sxpHandle);
-	sxpYSize = RGDAL_GetRasterYSize(sxpHandle);
+	sxpXSize = Rf_protect(RGDAL_GetRasterXSize(sxpHandle));
+	sxpYSize = Rf_protect(RGDAL_GetRasterYSize(sxpHandle));
 	XSize = Rf_asInteger(sxpXSize);
 	YSize = Rf_asInteger(sxpYSize);
 
 
 	// Get coordinate information GDALReadOnlyDataset
-	sxpGt = RGDAL_GetGeoTransform(sxpHandle);
+	sxpGt = Rf_protect(RGDAL_GetGeoTransform(sxpHandle));
 
 
 	// Set coordinate information
@@ -52,5 +65,6 @@ Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle) {
 		}
 	}
 
+	Rf_unprotect(4);
 	return centres;
 }

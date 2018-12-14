@@ -34,12 +34,15 @@
 // Utility functions
 void rebase_index(Rcpp::IntegerVector x);
 bool check_maxima(const int, Rcpp::IntegerVector, Rcpp::NumericVector);
+Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix, Rcpp::LogicalVector);
+Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix, Rcpp::IntegerVector);
 
 
 // Functionality
-Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle);
-Rcpp::NumericVector get_heights(SEXP sxpHandle);
+Rcpp::NumericMatrix get_coordinates(SEXP sxpFile);
+Rcpp::NumericVector get_heights(SEXP sxpFile);
 Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, Rcpp::NumericVector z, double eps);
 
 
 // Workflow
+Rcpp::List find_local_maxima(Rcpp::CharacterVector files, double search_radius);
