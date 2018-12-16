@@ -26,7 +26,8 @@ Rcpp::List find_local_maxima(Rcpp::CharacterVector files, double search_radius){
 	SEXP fileName = Rf_protect(Rf_allocVector(STRSXP, 1));
 
 	for (int i = 0; i < files.length(); i++){
-		fileName = Rcpp::wrap(files[i]);
+		fileName = Rf_mkString(files[i]);
+		Rf_PrintValue(fileName);
 		
 		Rcpp::NumericMatrix xy = get_coordinates(fileName);
 		Rcpp::NumericVector z = get_heights(fileName);

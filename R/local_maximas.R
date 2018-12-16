@@ -51,7 +51,7 @@ local_maxima_search <- function(files, search.radius, chm.res = 0.25){
     ## Different function for .tif or .laz files
     use.tif <- all(is.tif)
     maxima <- if(use.tif){
-        lapply(files, local_maximas_tif, search.radius)
+        MPI_local_maximas_tif(files, search.radius)
     } else {
         lapply(files, local_maximas_laz, search.radius, chm.res)
     }
@@ -145,3 +145,7 @@ local_maximas_laz <- function(file, search.radius, chm.res = 0.25){
     
     return(maxima)
 }
+
+
+
+

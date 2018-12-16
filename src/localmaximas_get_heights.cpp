@@ -20,11 +20,14 @@ Rcpp::NumericVector get_heights(SEXP sxpFile){
 		Rf_error("NULL filename passed to get_heights");
 	}
 
-	if (Rf_isString(sxpFile)){
+	if (!Rf_isString(sxpFile)){
 		Rf_error("Variable passed to get_heights was not a STRSXP");
 	}
 
+	Rprintf("get_heights: Opening dataset\n");
+	Rf_PrintValue(sxpFile);
 	sxpHandle = Rf_protect(RGDAL_OpenDataset(sxpFile, Rf_ScalarLogical(1), Rf_ScalarLogical(1), R_NilValue, R_NilValue));
+	Rprintf("File Open\n");
 
 
 	// Get XSize and YSize
@@ -62,6 +65,7 @@ Rcpp::NumericVector get_heights(SEXP sxpFile){
 		heights.attr("dim") = R_NilValue;
 	}
 
+	sxpHandle = RGDAL_CloseDataset(sxpHandle);
 	Rf_unprotect(8);
 	return sxpHeights;
 }

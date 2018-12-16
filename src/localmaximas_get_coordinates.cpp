@@ -15,12 +15,14 @@ Rcpp::NumericMatrix get_coordinates(SEXP sxpFile) {
 		Rf_error("NULL filename passed to get_coordinates");
 	}
 
-	if (Rf_isString(sxpFile)){
+	if (!Rf_isString(sxpFile)){
 		Rf_error("Variable passed to get_coordinates was not a STRSXP");
 	}
 
+	Rprintf("get_coordinates: Opening dataset\n");
+	Rf_PrintValue(sxpFile);
 	sxpHandle = Rf_protect(RGDAL_OpenDataset(sxpFile, Rf_ScalarLogical(1), Rf_ScalarLogical(1), R_NilValue, R_NilValue));
-
+	Rprintf("File Open\n");
 
 
 	// Get XSize and YSize for GDALReadOnlyDataset
@@ -65,6 +67,7 @@ Rcpp::NumericMatrix get_coordinates(SEXP sxpFile) {
 		}
 	}
 
+	sxpHandle = RGDAL_CloseDataset(sxpHandle);
 	Rf_unprotect(4);
 	return centres;
 }

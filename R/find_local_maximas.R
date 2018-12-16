@@ -1,5 +1,3 @@
-
-
 #' find_local_maximas wrapper
 #'
 #' \code{local_maxima_search} is a wrapper around the \code{find_local_maximas}
@@ -36,7 +34,7 @@ local_maxima_catalog <- function(files, search.radius){
         stop("search.radius must be non-negative")
     }
     
-    
+    files  <- normalizePath(files, mustWork = FALSE)
     maxima <- find_local_maxima(files, search.radius)
     do.call("rbind", maxima)
 }
