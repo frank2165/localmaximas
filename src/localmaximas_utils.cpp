@@ -18,7 +18,7 @@ Rcpp::IntegerVector find_na(Rcpp::NumericVector x){
 }
 */
 
-void rebase_index(Rcpp::IntegerVector x){
+void rebase_index(Rcpp::IntegerVector &x){
 	for (auto& it : x){
 		it += 1;
 	}
@@ -27,7 +27,7 @@ void rebase_index(Rcpp::IntegerVector x){
 
 
 
-bool check_maxima(const int point, Rcpp::IntegerVector neighbours, Rcpp::NumericVector Z) {
+bool check_maxima(const int point, Rcpp::IntegerVector &neighbours, Rcpp::NumericVector &Z) {
 
 	// neighbours should be an index of Z
 	assert(max(neighbours) < Z.length());
@@ -49,4 +49,34 @@ bool check_maxima(const int point, Rcpp::IntegerVector neighbours, Rcpp::Numeric
 
 	localmaximum = (it == neighbours.end());
 	return localmaximum;
+}
+
+
+
+
+Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix &M, Rcpp::LogicalVector &keep){
+	Rcpp::NumericMatrix out(Rcpp::sum(keep), M.ncol());
+	Rcpp::NumericVector col(M.nrow());
+
+	for (int i = 0; i < out.ncol(); i++){
+		col = M(Rcpp::_, i);
+		col = col[keep];
+		out(Rcpp::_, i) = col;
+	}
+
+	return out;
+}
+
+
+Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix &M, Rcpp::IntegerVector &idx){
+	Rcpp::NumericMatrix out(idx.length(), M.ncol());
+	Rcpp::NumericVector col(M.nrow());
+
+	for (int i = 0; i < out.ncol(); i++){
+		col = M(Rcpp::_, i);
+		col = col[idx];
+		out(Rcpp::_, i) = col;
+	}
+
+	return out;
 }

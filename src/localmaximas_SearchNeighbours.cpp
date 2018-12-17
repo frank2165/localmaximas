@@ -26,7 +26,7 @@
 
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, NumericVector z, double eps) {
+Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, NumericVector &z, double eps) {
 
 	// formerly arguments to frNN
 	int bucketSize = 10;	// default to frNN

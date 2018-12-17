@@ -10,8 +10,9 @@
 #'
 #' @return A matrix containing the (x,y,z) coordinates of each maximum.
 #' @export
-local_maxima_catalog <- function(files, search.radius){
+local_maxima_search <- function(files, search.radius){
     
+    ## Input Checks
     if(!is.character(files)){
         stop("files must be a character vector of file paths")
     }
@@ -34,7 +35,12 @@ local_maxima_catalog <- function(files, search.radius){
         stop("search.radius must be non-negative")
     }
     
-    files  <- normalizePath(files, mustWork = FALSE)
-    maxima <- find_local_maxima(files, search.radius)
+
+    ## Open files
+    handles <- lapply(files, GDAL.open, read.only = TRUE, silent = TRUE)
+    
+    
+    ## Find local maxima
+    maxima <- FindLocalMaxima(handles, search.radius)
     do.call("rbind", maxima)
 }

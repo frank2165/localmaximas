@@ -13,9 +13,6 @@
 
 */
 
-
-
-
 #define R_NO_REMAP // Recommended
 
 
@@ -31,18 +28,32 @@
 #include "ANN.h"
 
 
+// Structures
+struct RasterData{
+	int XSize = 0;
+	int YSize = 0;
+	double origin_x = 0.0;
+	double origin_y = 0.0;
+	double res_x = 0.0;
+	double res_y = 0.0;
+	Rcpp::NumericVector z;
+};
+
+
+
 // Utility functions
-void rebase_index(Rcpp::IntegerVector x);
-bool check_maxima(const int, Rcpp::IntegerVector, Rcpp::NumericVector);
-Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix, Rcpp::LogicalVector);
-Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix, Rcpp::IntegerVector);
+void rebase_index(Rcpp::IntegerVector &x);
+bool check_maxima(const int, Rcpp::IntegerVector&, Rcpp::NumericVector&);
+Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix&, Rcpp::LogicalVector&);
+Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix&, Rcpp::IntegerVector&);
 
 
 // Functionality
-Rcpp::NumericMatrix get_coordinates(SEXP sxpFile);
-Rcpp::NumericVector get_heights(SEXP sxpFile);
-Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, Rcpp::NumericVector z, double eps);
+RasterData ReadDataset(SEXP sxpHandle);
+Rcpp::NumericMatrix SetCoordinates(RasterData&);
+void RemoveMissingZ(RasterData&, Rcpp::NumericMatrix);
+Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix xy, Rcpp::NumericVector z, double eps);
 
 
 // Workflow
-Rcpp::List find_local_maxima(Rcpp::CharacterVector files, double search_radius);
+Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius);

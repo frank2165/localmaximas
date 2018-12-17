@@ -5,59 +5,38 @@
 
 using namespace Rcpp;
 
-// find_local_maxima
-Rcpp::List find_local_maxima(Rcpp::CharacterVector files, double search_radius);
-RcppExport SEXP _localmaximas_find_local_maxima(SEXP filesSEXP, SEXP search_radiusSEXP) {
+// FindLocalMaxima
+Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius);
+RcppExport SEXP _localmaximas_FindLocalMaxima(SEXP handlesSEXP, SEXP radiusSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type files(filesSEXP);
-    Rcpp::traits::input_parameter< double >::type search_radius(search_radiusSEXP);
-    rcpp_result_gen = Rcpp::wrap(find_local_maxima(files, search_radius));
+    Rcpp::traits::input_parameter< Rcpp::List >::type handles(handlesSEXP);
+    Rcpp::traits::input_parameter< double >::type radius(radiusSEXP);
+    rcpp_result_gen = Rcpp::wrap(FindLocalMaxima(handles, radius));
     return rcpp_result_gen;
 END_RCPP
 }
-// frNN_search
-Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, NumericVector z, double eps);
-RcppExport SEXP _localmaximas_frNN_search(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
+// SearchNeighbours
+Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix& xy, NumericVector& z, double eps);
+RcppExport SEXP _localmaximas_SearchNeighbours(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< NumericVector >::type z(zSEXP);
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< NumericVector& >::type z(zSEXP);
     Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
-    rcpp_result_gen = Rcpp::wrap(frNN_search(xy, z, eps));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_coordinates
-Rcpp::NumericMatrix get_coordinates(SEXP sxpFile);
-RcppExport SEXP _localmaximas_get_coordinates(SEXP sxpFileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpFile(sxpFileSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_coordinates(sxpFile));
-    return rcpp_result_gen;
-END_RCPP
-}
-// get_heights
-Rcpp::NumericVector get_heights(SEXP sxpFile);
-RcppExport SEXP _localmaximas_get_heights(SEXP sxpFileSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< SEXP >::type sxpFile(sxpFileSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_heights(sxpFile));
+    rcpp_result_gen = Rcpp::wrap(SearchNeighbours(xy, z, eps));
     return rcpp_result_gen;
 END_RCPP
 }
 
+RcppExport SEXP RGDAL_Init();
+
 static const R_CallMethodDef CallEntries[] = {
-    {"_localmaximas_find_local_maxima", (DL_FUNC) &_localmaximas_find_local_maxima, 2},
-    {"_localmaximas_frNN_search", (DL_FUNC) &_localmaximas_frNN_search, 3},
-    {"_localmaximas_get_coordinates", (DL_FUNC) &_localmaximas_get_coordinates, 1},
-    {"_localmaximas_get_heights", (DL_FUNC) &_localmaximas_get_heights, 1},
+    {"_localmaximas_FindLocalMaxima", (DL_FUNC) &_localmaximas_FindLocalMaxima, 2},
+    {"_localmaximas_SearchNeighbours", (DL_FUNC) &_localmaximas_SearchNeighbours, 3},
+    {"RGDAL_Init",                     (DL_FUNC) &RGDAL_Init,                     0},
     {NULL, NULL, 0}
 };
 
