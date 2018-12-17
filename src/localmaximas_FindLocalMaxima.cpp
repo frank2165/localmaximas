@@ -4,7 +4,7 @@ local maxima within each file. OpenMP is used in an attempt to minimise the prog
 */
 
 
-//#include <omp.h>
+#include <omp.h>
 #include "localmaximas.h"
 
 
@@ -18,6 +18,9 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius){
 	Rcpp::IntegerVector idxMaxima;
 	RasterData data;
 
+	int NumThreads = omp_get_max_threads();
+	omp_set_num_threads(NumThreads);
+
 
 	/* Loop over the files:
 		1./ Get the raster coordinates,
@@ -26,10 +29,14 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius){
 		4./ Use fixed-radius NN search to find maxima,
 		5./ Store xyz-coordinates in list
 	*/
+#pragma omp parallel for shared(maxima, handles) private(numPts, coords, maximaCoords, idxMaxima, data) 
 	for (int i = 0; i < handles.length(); i++){		
 
 		// Get data
-		data = ReadDataset(handles[i]);
+#pragma omp critical
+		{
+			data = ReadDataset(handles[i]); // I/O is serial, make sure only one thread is reading.
+		}
 		numPts = data.XSize * data.YSize;
 
 		// Make the coordinates

@@ -1,5 +1,5 @@
 CXX_STD = CXX11
-CXXFLAGS = -g -O0 -Wall
+CXXFLAGS = -g -O0 -Wall -fopenmp
 
 VERSION = 2.2.3
 COMPILED_BY ?= gcc-4.6.3
@@ -11,7 +11,8 @@ PKG_CPPFLAGS =\
   -I$(RWINLIB)/include/geos \
   -I$(RWINLIB)/include/proj \
   -IANN \
-  -I.
+  -I. \
+  -fopenmp
 
 PKG_LIBS = \
   -L$(RWINLIB)/$(TARGET) \
@@ -20,4 +21,5 @@ PKG_LIBS = \
   -lkea -lhdf5_cpp -lhdf5_hl -lhdf5 -lexpat -lfreexl -lcfitsio \
   -lmfhdf -ldf -lxdr \
   -lopenjp2 -ljasper -lpng16 -ljpeg -ltiff -lgeotiff -lgif -lxml2 -llzma -lszip -lz \
-  -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32
+  -lodbc32 -lodbccp32 -liconv -lpsapi -lws2_32 -lcrypt32 -lwldap32 -lsecur32 -lgdi32 \
+  -fopenmp
