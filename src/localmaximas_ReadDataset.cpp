@@ -1,5 +1,4 @@
 
-
 #include "localmaximas.h"
 
 
@@ -7,7 +6,7 @@
 RasterData ReadDataset(SEXP sxpHandle){
 
 	RasterData data; // Need to make sure that memory is allocated on the heap (maybe you need a class?)
-	SEXP sxpXSize, sxpYSize, sxpDimReg, sxpDimOut, sxpInterleave, sxpGt, sxpRasterPtr;
+	SEXP sxpXSize, sxpYSize, sxpDimReg, sxpDimOut, sxpInterleave, sxpGt, sxpRasterPtr, sxpHeights;
 	Rcpp::S4 RGDAL_GDALRasterBand("GDALRasterBand");
 
 
@@ -21,9 +20,9 @@ RasterData ReadDataset(SEXP sxpHandle){
 
 
 	// Set RGDAL_GetRasterData args
-	SEXP sxpDimReg = Rf_protect(Rf_allocVector(INTSXP, 4));
-	SEXP sxpDimOut = Rf_protect(Rf_allocVector(INTSXP, 2));
-	SEXP sxpInterleave = Rf_protect(Rf_allocVector(INTSXP, 2));
+	sxpDimReg = Rf_protect(Rf_allocVector(INTSXP, 4));
+	sxpDimOut = Rf_protect(Rf_allocVector(INTSXP, 2));
+	sxpInterleave = Rf_protect(Rf_allocVector(INTSXP, 2));
 
 	memset(INTEGER(sxpInterleave), 0, 2 * sizeof(int));
 
@@ -37,8 +36,8 @@ RasterData ReadDataset(SEXP sxpHandle){
 
 	// Read raster data
 	sxpRasterPtr = Rf_protect(RGDAL_GetRasterBand(sxpHandle, Rf_ScalarInteger(1)));
-	sxpGDALRasterBand.slot("handle") = sxpRasterPtr;
-	sxpHeights = Rf_protect(RGDAL_GetRasterData(sxpGDALRasterBand, sxpDimReg, sxpDimOut, sxpInterleave));
+	RGDAL_GDALRasterBand.slot("handle") = sxpRasterPtr;
+	sxpHeights = Rf_protect(RGDAL_GetRasterData(RGDAL_GDALRasterBand, sxpDimReg, sxpDimOut, sxpInterleave));
 
 
 

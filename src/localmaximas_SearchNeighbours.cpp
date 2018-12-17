@@ -86,9 +86,6 @@ Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, NumericVector &z, 
 	}
   }
 
-  // Conversion back to 1-based indexing
-  rebase_index(maxima);
-
 
   // cleanup
   delete kdTree;

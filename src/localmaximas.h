@@ -51,8 +51,8 @@ Rcpp::NumericMatrix subset_matrix_rows(Rcpp::NumericMatrix&, Rcpp::IntegerVector
 // Functionality
 RasterData ReadDataset(SEXP sxpHandle);
 Rcpp::NumericMatrix SetCoordinates(RasterData&);
-void RemoveMissingZ(RasterData&, Rcpp::NumericMatrix);
-Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix xy, Rcpp::NumericVector z, double eps);
+void RemoveMissingZ(RasterData&, Rcpp::NumericMatrix&);
+Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, Rcpp::NumericVector &z, double eps);
 
 
 // Workflow

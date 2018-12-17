@@ -12,7 +12,7 @@ local maxima within each file. OpenMP is used in an attempt to minimise the prog
 Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius){
 	
 	// Allocate memory for output
-	int numPts;
+	int numPts = 0;
 	Rcpp::List maxima(handles.length()); 
 	Rcpp::NumericMatrix coords, maximaCoords;
 	Rcpp::IntegerVector idxMaxima;

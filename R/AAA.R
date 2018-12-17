@@ -6,13 +6,13 @@
 #' @importFrom Rcpp sourceCpp
 NULL
 
-.onLoad <- function(lib, pkg){
-    .Call('RGDAL_Init')
-}
+
 
 .onUnload <- function(libpath) {
     library.dynam.unload('localmaximas', libpath)
 }
+
+
 
 
 rebuild <- function(path = NULL){
