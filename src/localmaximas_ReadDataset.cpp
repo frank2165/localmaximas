@@ -53,11 +53,8 @@ RasterData ReadDataset(SEXP sxpHandle){
 
 
 
-	// Convert REALSXP to Rcpp::NumericVector, strip dimension attribute (if it exists)
-	data.z = Rcpp::wrap(sxpHeights);
-	if (data.z.hasAttribute("dim")){
-		data.z.attr("dim") = R_NilValue;
-	}
+	// Convert REALSXP to arma::Col<double>, strip dimension attribute (if it exists)
+	data.z = Rcpp::as<arma::Col<double>>(Rcpp::wrap(sxpHeights));
 
 
 	// Return

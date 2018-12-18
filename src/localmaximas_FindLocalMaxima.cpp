@@ -8,18 +8,21 @@ local maxima within each file. OpenMP is used in an attempt to minimise the prog
 #include "localmaximas.h"
 
 
-//[[Rcpp::export]]
-Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius){
-	
-	// Allocate memory for output
-	int numPts = 0;
-	Rcpp::List maxima(handles.length()); 
-	Rcpp::NumericMatrix coords, maximaCoords;
-	Rcpp::IntegerVector idxMaxima;
-	RasterData data;
+static int MAXTHREADS = omp_get_max_threads();
 
-	int NumThreads = omp_get_max_threads();
-	omp_set_num_threads(NumThreads);
+
+//[[Rcpp::export]]
+Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
+
+	// Allocate memory for output
+	Rcpp::List maxima(handles.length());
+
+
+	if (numCores > MAXTHREADS){
+		numCores = MAXTHREADS;
+	}
+	
+	omp_set_num_threads(numCores);
 
 
 	/* Loop over the files:
@@ -28,38 +31,45 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius){
 		3./ Remove CHM points with missing data,
 		4./ Use fixed-radius NN search to find maxima,
 		5./ Store xyz-coordinates in list
-	*/
-#pragma omp parallel for shared(maxima, handles) private(numPts, coords, maximaCoords, idxMaxima, data) 
-	for (int i = 0; i < handles.length(); i++){		
+		*/
+#pragma omp parallel
+	{
 
-		// Get data
+#pragma omp for
+		for (int i = 0; i < handles.length(); i++){
+			RasterData data;
+
+			// Get data
 #pragma omp critical
-		{
-			data = ReadDataset(handles[i]); // I/O is serial, make sure only one thread is reading.
+			{
+				data = ReadDataset(handles[i]); // I/O is serial, make sure only one thread is reading. (THREAD-SAFETY!)
+			}
+
+			// Make the coordinates
+			arma::Mat<double> coords = SetCoordinates(data);
+
+
+			// Remove the missing values
+			arma::Col<unsigned int> idxFinite = arma::find_finite(data.z);
+			coords = coords.rows(idxFinite);
+			data.z = data.z.rows(idxFinite);
+
+
+			// frNN search for local maxima
+			arma::Col<unsigned int> idxMaxima = SearchNeighbours(coords, data.z, radius);
+
+
+			// Output
+			coords = coords.rows(idxMaxima);
+			data.z = data.z.rows(idxMaxima);
+			coords.insert_cols(coords.n_cols, data.z);
+
+#pragma omp critical 
+			{
+				maxima[i] = coords; // R & Rcpp API is not thread-safe.
+			}
 		}
-		numPts = data.XSize * data.YSize;
 
-		// Make the coordinates
-		coords = SetCoordinates(data);
-
-
-		// Remove the missing values
-		RemoveMissingZ(data, coords);
-
-
-		// frNN search for local maxima
-		idxMaxima = SearchNeighbours(coords, data.z, radius);
-
-
-		// Output
-		Rcpp::NumericMatrix maximaCoords(idxMaxima.length(), 3);
-		coords = subset_matrix_rows(coords, idxMaxima);
-		data.z = data.z[idxMaxima];
-		maximaCoords(Rcpp::_, 0) = coords(Rcpp::_, 0);
-		maximaCoords(Rcpp::_, 1) = coords(Rcpp::_, 1);
-		maximaCoords(Rcpp::_, 2) = data.z;
-
-		maxima[i] = maximaCoords;
 	}
 	
 

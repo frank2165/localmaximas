@@ -4,7 +4,7 @@
 \alias{local_maxima_search}
 \title{find_local_maximas wrapper}
 \usage{
-local_maxima_search(files, search.radius)
+local_maxima_search(files, search.radius, num.cores = 4)
 }
 \arguments{
 \item{files}{a character vector of paths to tif files containing the canopy
@@ -12,6 +12,8 @@ height map.}
 
 \item{search.radius}{the distance around each raster cell that defines the
 search neighbourhood.}
+
+\item{num.cores}{integer defining the number of cores to use.}
 }
 \value{
 A matrix containing the (x,y,z) coordinates of each maximum.

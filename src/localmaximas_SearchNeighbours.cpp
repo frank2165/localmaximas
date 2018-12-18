@@ -26,7 +26,7 @@
 
 
 // [[Rcpp::export]]
-Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, NumericVector &z, double eps) {
+arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma::Col<double> &z, const double eps) {
 
 	// formerly arguments to frNN
 	int bucketSize = 10;	// default to frNN
@@ -37,11 +37,11 @@ Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, NumericVector &z, 
   double eps2 = eps*eps;
 
   // copy xy
-  int nrow = xy.nrow();
-  int ncol = xy.ncol();
+  unsigned int nrow = xy.n_rows;
+  unsigned int ncol = xy.n_cols;
   ANNpointArray dataPts = annAllocPts(nrow, ncol);
-  for (int j = 0; j < ncol; j++){
-	for(int i = 0; i < nrow; i++){
+  for (unsigned int j = 0; j < ncol; j++){
+	for(unsigned int i = 0; i < nrow; i++){
       dataPts[i][j] = xy(i, j);
     }
   }
@@ -53,23 +53,24 @@ Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, NumericVector &z, 
 
   // initialise search
   bool isMaxima = false;
-  Rcpp::IntegerVector maxima;
-  Rcpp::LogicalVector pointTested(nrow, false);
-  std::vector<int> idxNeighbours;
+  std::vector<bool> pointTested(nrow, false);
+  std::vector<unsigned int> maxima;
 
-  for (int p = 0; p < nrow; p++) {
-    if (!(p % 100)) Rcpp::checkUserInterrupt(); // Check whether the user wants to stop
+  for (unsigned int p = 0; p < nrow; p++) {
 
 	if (!pointTested[p]){
 		// Find the neighbours to the current point.
-		idxNeighbours = regionQuery(p, dataPts, kdTree, eps2, approx); 
+		std::vector<int> idxNeighbours = regionQuery(p, dataPts, kdTree, eps2, approx);
+		std::vector<unsigned int> ids(idxNeighbours.begin(), idxNeighbours.end());
 
-		// wrap std::vector<int> to Rcpp::IntegerVector
-		Rcpp::IntegerVector ids = Rcpp::wrap(idxNeighbours);
 
 		// remove self matches
-		Rcpp::LogicalVector take = (ids != p);
-		ids = ids[take];
+		std::vector<bool> take(ids.size(), true);
+		std::transform(ids.begin(), ids.end(), take.begin(),
+			[p](size_t pos){ return pos == p; });
+
+		ids = subset_by_logical(ids, take);
+
 
 		// Check whether the point is a maximum in its neighbourhood
 		isMaxima = check_maxima(p, ids, z);
@@ -92,5 +93,13 @@ Rcpp::IntegerVector SearchNeighbours(Rcpp::NumericMatrix &xy, NumericVector &z, 
   annDeallocPts(dataPts);
   annClose(); // fix a minor memory leak (see ANN.h)
 
-  return maxima;
+
+  // Convert std::vector<int> to arma::Col<unsigned int>
+  arma::Col<unsigned int> ARMA_maxima(maxima.size());
+  for (unsigned int i = 0; i < ARMA_maxima.n_rows; i++){
+	  ARMA_maxima(i) = maxima[i];
+  }
+
+
+  return ARMA_maxima;
 }

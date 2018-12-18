@@ -1,9 +1,9 @@
 
 #include "localmaximas.h"
 
-Rcpp::NumericMatrix SetCoordinates(RasterData &data) {
+arma::Mat<double> SetCoordinates(const RasterData &data) {
 
-	int numPts = 0;
+	unsigned int numPts = 0;
 	double origin_x = data.origin_x, origin_y = data.origin_y;
 
 
@@ -16,7 +16,7 @@ Rcpp::NumericMatrix SetCoordinates(RasterData &data) {
 
 	// Allocate storage for coordinates
 	numPts = data.XSize * data.YSize;
-	Rcpp::NumericMatrix centres(numPts, 2);
+	arma::Mat<double> centres(numPts, 2);
 
 
 
@@ -34,7 +34,6 @@ Rcpp::NumericMatrix SetCoordinates(RasterData &data) {
 			centres(pt_idx, 1) = origin_y + linedbl * data.res_y;
 		}
 	}
-
 
 
 	return centres;

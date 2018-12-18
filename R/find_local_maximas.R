@@ -7,10 +7,11 @@
 #'   height map.
 #' @param search.radius the distance around each raster cell that defines the
 #'   search neighbourhood.
+#' @param num.cores integer defining the number of cores to use.
 #'
 #' @return A matrix containing the (x,y,z) coordinates of each maximum.
 #' @export
-local_maxima_search <- function(files, search.radius){
+local_maxima_search <- function(files, search.radius, num.cores = 4){
     
     ## Input Checks
     if(!is.character(files)){
@@ -41,6 +42,6 @@ local_maxima_search <- function(files, search.radius){
     
     
     ## Find local maxima
-    maxima <- FindLocalMaxima(handles, search.radius)
+    maxima <- FindLocalMaxima(handles, search.radius, num.cores)
     do.call("rbind", maxima)
 }
