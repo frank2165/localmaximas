@@ -124,6 +124,10 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 		maximaList[i] = Rcpp::as<Rcpp::NumericMatrix>(Rcpp::wrap(maxima[i]));
 	}
 
+
+
+	annClose();
+
 	return maximaList;
 }
 

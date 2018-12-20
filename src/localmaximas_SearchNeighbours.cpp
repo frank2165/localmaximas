@@ -20,6 +20,8 @@
 
 // Note: does not return self-matches unless selfmatches = TRUE
 
+#include <iostream>
+
 #include "localmaximas.h"
 #include "R_regionQuery.h"
 
@@ -48,7 +50,7 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
  
 
   // create kd-tree
-  ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule);
+  ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule); // Allocating to heap
 
 
   // initialise search
@@ -91,7 +93,7 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
   // cleanup
   delete kdTree;
   annDeallocPts(dataPts);
-  annClose(); // fix a minor memory leak (see ANN.h)
+  //annClose(); // fix a minor memory leak (see ANN.h)
 
 
   // Convert std::vector<int> to arma::Col<unsigned int>
