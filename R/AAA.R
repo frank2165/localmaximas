@@ -16,8 +16,9 @@ NULL
 
 
 rebuild <- function(path = NULL){
-    tryCatch(detach("package:localmaximas"))
-    tryCatch(unloadNamespace("localmaximas"))
+    if("localmaximas" %in% .packages()){
+        detach("package:localmaximas", unload = TRUE)
+    }
     if(is.null(path)){
         path <- devtools::build()
     }
