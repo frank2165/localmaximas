@@ -53,8 +53,12 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 			for (int thread = 0; thread < numCores; thread++) {
 
 				int threadID = omp_get_thread_num();
-
-				data = dataList[threadID];
+#pragma omp critical
+				{
+					std::cout << "Thread = " << threadID << " reading from dataList" << std::endl;
+					data = dataList[threadID];
+					std::cout << "Read complete!" << std::endl;
+				}
 
 				// Make the coordinates
 				arma::Mat<double> coords = SetCoordinates(data);
@@ -77,8 +81,8 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 
 #pragma omp critical
 				{
-					std::cout << "Thread = " << threadID << " writing to maximas" << std::endl;
-					std::cout << "Writing to maximas[" << std::distance(maxima.begin(), it) << "]" << std::endl;
+					std::cout << "Thread = " << threadID << " writing to maxima" << std::endl;
+					std::cout << "Writing to maxima[" << std::distance(maxima.begin(), it) << "]" << std::endl;
 					*(it + threadID) = coords;
 					std::cout << "Write complete" << std::endl;
 				}
