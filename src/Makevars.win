@@ -1,6 +1,8 @@
 CXX_STD = CXX11
 CXXFLAGS = -g -O0 -Wall -fopenmp
 
+export OMP_STACKSIZE = 500M
+
 VERSION = 2.2.3
 COMPILED_BY ?= gcc-4.6.3
 RWINLIB = ../windows/gdal2-$(VERSION)

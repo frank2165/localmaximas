@@ -48,9 +48,11 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
     }
   }
  
+  std::cout << "&dataPts: " << &dataPts << std::endl;
 
   // create kd-tree
-  ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule); // Allocating to heap
+	ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule);
+	std::cout << "&kdTree: " << &kdTree << std::endl;
 
 
   // initialise search
@@ -89,11 +91,15 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 	}
   }
 
+  std::cout << "Found maxima: success!" << std::endl;
 
   // cleanup
   delete kdTree;
   annDeallocPts(dataPts);
   //annClose(); // fix a minor memory leak (see ANN.h)
+
+
+  std::cout << "deallocated kdTree and points: success!" << std::endl;
 
 
   // Convert std::vector<int> to arma::Col<unsigned int>

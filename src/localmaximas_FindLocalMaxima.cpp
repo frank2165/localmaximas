@@ -67,6 +67,7 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				// Make the coordinates
 #pragma omp critical
 				{
+					std::cout << "Thread = " << threadID << " setting coordinates" << std::endl;
 					arma::Mat<double> coords = SetCoordinates(data);
 					std::cout << "Thread " << threadID << " finished SetCoordinates" << std::endl;
 				}
@@ -74,6 +75,7 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				// Remove the missing values
 #pragma omp critical
 				{
+					std::cout << "Thread = " << threadID << " removing missing values" << std::endl;
 					arma::Col<unsigned int> idxFinite = arma::find_finite(data.z);
 					coords = coords.rows(idxFinite);
 					data.z = data.z.rows(idxFinite);
@@ -85,8 +87,13 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				// frNN search for local maxima
 #pragma omp critical
 				{
-					arma::Col<unsigned int> idxMaxima = SearchNeighbours(coords, data.z, radius);
-					std::cout << "Thread " << threadID << " finished SearchNeighbours" << std::endl;
+					std::cout << "Thread = " << threadID << " finding maxima" << std::endl;
+					try{
+						arma::Col<unsigned int> idxMaxima = SearchNeighbours(coords, data.z, radius);
+					}
+					catch (const std::bad_alloc& e){
+						std::cout << "Thread " << threadID << e.what() << std::endl;
+					}
 				}
 
 
