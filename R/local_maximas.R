@@ -79,7 +79,7 @@ local_maximas_tif <- function(file, search.radius){
     
     
     ## Check that all files are a valid (band == 1, square cells and no obliqueness)
-    silent <- check_chm_file(file.handle)
+    silent <- check_chm_file(file)
     
     
     ## Get coordinates and heights
