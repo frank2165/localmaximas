@@ -49,6 +49,7 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
   }
  
   std::cout << "&dataPts: " << &dataPts << std::endl;
+  std::cout << "nrow = " << nrow << ", ncol = " << ncol << ", numPts = " << nrow * ncol << std::endl;
 
   // create kd-tree
 	ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule);

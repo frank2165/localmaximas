@@ -162,6 +162,9 @@ void sl_midpt_split(
 			max_length = length;
 		}
 	}
+
+	std::cout << "sl_midpt_split: max_length = " << max_length << std::endl;
+
 	ANNcoord max_spread = -1;			// find long side with most spread
 	for (d = 0; d < dim; d++) {
 										// is it among longest?
@@ -177,8 +180,12 @@ void sl_midpt_split(
 										// ideal split at midpoint
 	ANNcoord ideal_cut_val = (bnds.lo[cut_dim] + bnds.hi[cut_dim])/2;
 
+	std::cout << "sl_midpt_split: cut_dim = " << cut_dim << ", ideal_cut_val = " << ideal_cut_val << std::endl;
+
 	ANNcoord min, max;
 	annMinMax(pa, pidx, n, cut_dim, min, max);	// find min/max coordinates
+
+	std::cout << "sl_midpt_split: min = " << min << ", max = " << max << std::endl;
 
 	if (ideal_cut_val < min)			// slide to min or max as needed
 		cut_val = min;

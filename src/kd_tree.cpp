@@ -321,10 +321,13 @@ ANNkd_ptr rkd_tree(				// recursive construction of kd-tree
 	ANNkd_splitter		splitter)		// splitting routine
 {
 	if (n <= bsp) {						// n small, make a leaf node
-		if (n == 0)						// empty leaf node
+		if (n == 0)	{					// empty leaf node
+			std::cout << "rkd_tree: Trivial Node" << std::endl;
 			return KD_TRIVIAL;			// return (canonical) empty leaf
-		else							// construct the node and return
-			return new ANNkd_leaf(n, pidx); 
+		} else {							// construct the node and return
+			std::cout << "rkd_tree: Construct Node with ANNkd_leaf" << std::endl;
+			return new ANNkd_leaf(n, pidx);
+		}
 	}
 	else {								// n large, make a splitting node
 		int cd;							// cutting dimension
@@ -333,26 +336,31 @@ ANNkd_ptr rkd_tree(				// recursive construction of kd-tree
 		ANNkd_node *lo, *hi;			// low and high children
 
 										// invoke splitting procedure
+		std::cout << "rkd_tree: Invoke Splitting Procedure (n = " << n << ")" << std::endl;
 		(*splitter)(pa, pidx, bnd_box, n, dim, cd, cv, n_lo);
 
 		ANNcoord lv = bnd_box.lo[cd];	// save bounds for cutting dimension
 		ANNcoord hv = bnd_box.hi[cd];
 
 		bnd_box.hi[cd] = cv;			// modify bounds for left subtree
+		std::cout << "rkd_tree: Build Left Subtree" << std::endl;
 		lo = rkd_tree(					// build left subtree
 				pa, pidx, n_lo,			// ...from pidx[0..n_lo-1]
 				dim, bsp, bnd_box, splitter);
 		bnd_box.hi[cd] = hv;			// restore bounds
 
 		bnd_box.lo[cd] = cv;			// modify bounds for right subtree
+		std::cout << "rkd_tree: Build Right Subtree" << std::endl;
 		hi = rkd_tree(					// build right subtree
 				pa, pidx + n_lo, n-n_lo,// ...from pidx[n_lo..n-1]
 				dim, bsp, bnd_box, splitter);
 		bnd_box.lo[cd] = lv;			// restore bounds
 
 										// create the splitting node
+		std::cout << "rkd_tree: Create Splitting node with ANNkd_split" << std::endl;
 		ANNkd_split *ptr = new ANNkd_split(cd, cv, lv, hv, lo, hi);
 
+		std::cout << "rkd_tree: Return Pointer to this node" << std::endl;
 		return ptr;						// return pointer to this node
 	}
 } 
@@ -373,33 +381,46 @@ ANNkd_tree::ANNkd_tree(					// construct from point array
 	ANNsplitRule		split)			// splitting method
 {
 	SkeletonTree(n, dd, bs);			// set up the basic stuff
+	std::cout << "ANNkd_tree: Created Skeleton Tree" << std::endl;
 	pts = pa;							// where the points are
 	if (n == 0) return;					// no points--no sweat
 
 	ANNorthRect bnd_box(dd);			// bounding box for points
 	annEnclRect(pa, pidx, n, dd, bnd_box);// construct bounding rectangle
+	std::cout << "ANNkd_tree: Created Bounding Box" << std::endl;
 										// copy to tree structure
 	bnd_box_lo = annCopyPt(dd, bnd_box.lo);
 	bnd_box_hi = annCopyPt(dd, bnd_box.hi);
 
+	std::cout << "ANNkd_tree: n = " << n << std::endl;
+	std::cout << "ANNkd_tree: dd = " << dd << std::endl;
+	std::cout << "ANNkd_tree: bs = " << bs << std::endl;
+
 	switch (split) {					// build by rule
 	case ANN_KD_STD:					// standard kd-splitting rule
+		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_STD" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, kd_split);
 		break;
 	case ANN_KD_MIDPT:					// midpoint split
+		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_MIDPT" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, midpt_split);
 		break;
 	case ANN_KD_FAIR:					// fair split
+		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_FAIR" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, fair_split);
 		break;
 	case ANN_KD_SUGGEST:				// best (in our opinion)
 	case ANN_KD_SL_MIDPT:				// sliding midpoint split
+		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_SL_MIDPT" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, sl_midpt_split);
+		std::cout << "ANNkd_tree: Created kd-tree using ANN_KD_SL_MIDPT" << std::endl;
 		break;
 	case ANN_KD_SL_FAIR:				// sliding fair split
+		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_SL_FAIR" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, sl_fair_split);
 		break;
 	default:
+		std::cout << "ANNkd_tree: (Error) Illegal Splitting Method" << std::endl;
 		annError("Illegal splitting method", ANNabort);
 	}
 }
