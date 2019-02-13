@@ -51,7 +51,7 @@ local_maxima_search <- function(files, search.radius, chm.res = 0.25){
     
     
     ## Different function for .tif or .laz files
-    maxima.f <- setNames(vector("list", length = length(files)), files)
+    maxima  <- setNames(vector("list", length = length(files)), files)
     use.tif <- all(is.tif)
     if(use.tif){
         for(f in files){
@@ -63,7 +63,8 @@ local_maxima_search <- function(files, search.radius, chm.res = 0.25){
         }
     }
     
-    maxima <- setNames(lapply(maxima.f, value), files)
+    maxima <- lapply(maxima, value)
+    names(maxima) <- files
     return(maxima)
 }
 
@@ -86,7 +87,7 @@ local_maximas_tif <- function(file, search.radius){
     
     
     ## Check that all files are a valid (band == 1, square cells and no obliqueness)
-    silent <- check_chm_file(file.handle)
+    silent <- check_chm_file(file)
     
     
     ## Get coordinates and heights
