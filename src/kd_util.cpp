@@ -87,8 +87,8 @@ void annEnclRect(
 		bnds.lo[d] = lo_bnd;
 		bnds.hi[d] = hi_bnd;
 
-		std::cout << "bbox[0," << d << "] = " << lo_bnd << std::endl;
-		std::cout << "bbox[1," << d << "] = " << lo_bnd << std::endl;
+		//std::cout << "bbox[0," << d << "] = " << lo_bnd << std::endl;
+		//std::cout << "bbox[1," << d << "] = " << lo_bnd << std::endl;
 	}
 }
 

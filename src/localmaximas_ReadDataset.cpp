@@ -17,8 +17,7 @@ RasterData ReadDataset(SEXP sxpHandle){
 	data.XSize = Rf_asInteger(sxpXSize);
 	data.YSize = Rf_asInteger(sxpYSize);
 
-	std::cout << "XSize = " << data.XSize << ", YSize = " << data.YSize << std::endl;
-	std::cout << "XSize = " << data.XSize << ", YSize = " << data.YSize << std::endl;
+	//std::cout << "XSize = " << data.XSize << ", YSize = " << data.YSize << std::endl;
 
 
 	// Set RGDAL_GetRasterData args
@@ -54,8 +53,8 @@ RasterData ReadDataset(SEXP sxpHandle){
 	data.res_y = REAL(sxpGt)[5];
 
 
-	std::cout << "origin_x = " << data.origin_x << ", origin_y = " << data.origin_y << std::endl;
-	std::cout << "res_x = " << data.res_x << ", res_y = " << data.res_y << std::endl;
+	//std::cout << "origin_x = " << data.origin_x << ", origin_y = " << data.origin_y << std::endl;
+	//std::cout << "res_x = " << data.res_x << ", res_y = " << data.res_y << std::endl;
 
 
 	// Convert REALSXP to arma::Col<double>, strip dimension attribute (if it exists)

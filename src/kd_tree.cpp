@@ -381,46 +381,46 @@ ANNkd_tree::ANNkd_tree(					// construct from point array
 	ANNsplitRule		split)			// splitting method
 {
 	SkeletonTree(n, dd, bs);			// set up the basic stuff
-	std::cout << "ANNkd_tree: Created Skeleton Tree" << std::endl;
+	//std::cout << "ANNkd_tree: Created Skeleton Tree" << std::endl;
 	pts = pa;							// where the points are
 	if (n == 0) return;					// no points--no sweat
 
 	ANNorthRect bnd_box(dd);			// bounding box for points
 	annEnclRect(pa, pidx, n, dd, bnd_box);// construct bounding rectangle
-	std::cout << "ANNkd_tree: Created Bounding Box" << std::endl;
+	//std::cout << "ANNkd_tree: Created Bounding Box" << std::endl;
 										// copy to tree structure
 	bnd_box_lo = annCopyPt(dd, bnd_box.lo);
 	bnd_box_hi = annCopyPt(dd, bnd_box.hi);
 
-	std::cout << "ANNkd_tree: n = " << n << std::endl;
-	std::cout << "ANNkd_tree: dd = " << dd << std::endl;
-	std::cout << "ANNkd_tree: bs = " << bs << std::endl;
+	//std::cout << "ANNkd_tree: n = " << n << std::endl;
+	//std::cout << "ANNkd_tree: dd = " << dd << std::endl;
+	//std::cout << "ANNkd_tree: bs = " << bs << std::endl;
 
 	switch (split) {					// build by rule
 	case ANN_KD_STD:					// standard kd-splitting rule
-		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_STD" << std::endl;
+		//std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_STD" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, kd_split);
 		break;
 	case ANN_KD_MIDPT:					// midpoint split
-		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_MIDPT" << std::endl;
+		//std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_MIDPT" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, midpt_split);
 		break;
 	case ANN_KD_FAIR:					// fair split
-		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_FAIR" << std::endl;
+		//std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_FAIR" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, fair_split);
 		break;
 	case ANN_KD_SUGGEST:				// best (in our opinion)
 	case ANN_KD_SL_MIDPT:				// sliding midpoint split
-		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_SL_MIDPT" << std::endl;
+		//std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_SL_MIDPT" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, sl_midpt_split);
-		std::cout << "ANNkd_tree: Created kd-tree using ANN_KD_SL_MIDPT" << std::endl;
+		//std::cout << "ANNkd_tree: Created kd-tree using ANN_KD_SL_MIDPT" << std::endl;
 		break;
 	case ANN_KD_SL_FAIR:				// sliding fair split
-		std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_SL_FAIR" << std::endl;
+		//std::cout << "ANNkd_tree: Attempting rkd_tree using ANN_KD_SL_FAIR" << std::endl;
 		root = rkd_tree(pa, pidx, n, dd, bs, bnd_box, sl_fair_split);
 		break;
 	default:
-		std::cout << "ANNkd_tree: (Error) Illegal Splitting Method" << std::endl;
+		//std::cout << "ANNkd_tree: (Error) Illegal Splitting Method" << std::endl;
 		annError("Illegal splitting method", ANNabort);
 	}
 }

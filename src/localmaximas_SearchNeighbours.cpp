@@ -41,74 +41,72 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
   // copy xy
   unsigned int nrow = xy.n_rows;
   unsigned int ncol = xy.n_cols;
-  ANNpointArray dataPts = annAllocPts(nrow, ncol);
-  for (unsigned int j = 0; j < ncol; j++){
-	for(unsigned int i = 0; i < nrow; i++){
-      dataPts[i][j] = xy(i, j);
-    }
-  }
- 
-  std::cout << "&dataPts: " << &dataPts << std::endl;
-  std::cout << "nrow = " << nrow << ", ncol = " << ncol << ", numPts = " << nrow * ncol << std::endl;
 
-  // create kd-tree
+	  std::cout << "SearchNeighbours: nrow = " << nrow << ", ncol = " << ncol << std::endl;
+
+	  ANNpointArray dataPts = annAllocPts(nrow, ncol);
+	  for (unsigned int j = 0; j < ncol; j++) {
+		  for (unsigned int i = 0; i < nrow; i++) {
+			  dataPts[i][j] = xy(i, j);
+		  }
+	  }
+
+	//std::cout << "&dataPts: " << &dataPts << std::endl;
+
+	// create kd-tree
 	ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule);
 	std::cout << "&kdTree: " << &kdTree << std::endl;
 
 
-  // initialise search
-  bool isMaxima = false;
-  std::vector<bool> pointTested(nrow, false);
-  std::vector<unsigned int> maxima;
+	// initialise search
+	  bool isMaxima = false;
+	  std::vector<bool> pointTested(nrow, false);
+	  std::vector<unsigned int> maxima;
 
-  for (unsigned int p = 0; p < nrow; p++) {
+	  for (unsigned int p = 0; p < nrow; p++) {
 
-	if (!pointTested[p]){
-		// Find the neighbours to the current point.
-		std::vector<int> idxNeighbours = regionQuery(p, dataPts, kdTree, eps2, approx);
-		std::vector<unsigned int> ids(idxNeighbours.begin(), idxNeighbours.end());
-
-
-		// remove self matches
-		std::vector<bool> take(ids.size(), true);
-		std::transform(ids.begin(), ids.end(), take.begin(),
-			[p](size_t pos){ return pos == p; });
-
-		ids = subset_by_logical(ids, take);
+		  if (!pointTested[p]) {
+			  // Find the neighbours to the current point.
+			  std::vector<int> idxNeighbours = regionQuery(p, dataPts, kdTree, eps2, approx);
+			  std::vector<unsigned int> ids(idxNeighbours.begin(), idxNeighbours.end());
 
 
-		// Check whether the point is a maximum in its neighbourhood
-		isMaxima = check_maxima(p, ids, z);
-		if (isMaxima){
-			maxima.push_back(p);
+			  // remove self matches
+			  std::vector<bool> take(ids.size(), true);
+			  std::transform(ids.begin(), ids.end(), take.begin(),
+				  [p](size_t pos) { return pos == p; });
 
-			// If the point is a maximum then mark all other points (in the neighbourhood) as having 
-			// been tested, they cannot be a maximum in their respective neighbourhoods.
-			for (auto& it : ids){
-				pointTested[it] = true;
-			}
-		}
-		pointTested[p] = true;
-	}
-  }
-
-  std::cout << "Found maxima: success!" << std::endl;
-
-  // cleanup
-  delete kdTree;
-  annDeallocPts(dataPts);
-  //annClose(); // fix a minor memory leak (see ANN.h)
+			  ids = subset_by_logical(ids, take);
 
 
-  std::cout << "deallocated kdTree and points: success!" << std::endl;
+			  // Check whether the point is a maximum in its neighbourhood
+			  isMaxima = check_maxima(p, ids, z);
+			  if (isMaxima) {
+				  maxima.push_back(p);
+
+				  // If the point is a maximum then mark all other points (in the neighbourhood) as having 
+				  // been tested, they cannot be a maximum in their respective neighbourhoods.
+				  for (auto& it : ids) {
+					  pointTested[it] = true;
+				  }
+			  }
+			  pointTested[p] = true;
+		  }
+	  }
+
+	  //std::cout << "Found maxima: success!" << std::endl;
+
+	  // cleanup
+	  delete kdTree;
+	  annDeallocPts(dataPts);
+	  //annClose(); // fix a minor memory leak (see ANN.h)
 
 
-  // Convert std::vector<int> to arma::Col<unsigned int>
-  arma::Col<unsigned int> ARMA_maxima(maxima.size());
-  for (unsigned int i = 0; i < ARMA_maxima.n_rows; i++){
-	  ARMA_maxima(i) = maxima[i];
-  }
-
-
-  return ARMA_maxima;
+	  //std::cout << "deallocated kdTree and points: success!" << std::endl;
+	  // Convert std::vector<int> to arma::Col<unsigned int>
+	  arma::Col<unsigned int> ARMA_maxima(maxima.size());
+	  for (unsigned int i = 0; i < ARMA_maxima.n_rows; i++) {
+		  ARMA_maxima(i) = maxima[i];
+	  }
+	  return ARMA_maxima;
 }
