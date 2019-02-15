@@ -322,10 +322,10 @@ ANNkd_ptr rkd_tree(				// recursive construction of kd-tree
 {
 	if (n <= bsp) {						// n small, make a leaf node
 		if (n == 0)	{					// empty leaf node
-			std::cout << "rkd_tree: Trivial Node" << std::endl;
+			//std::cout << "rkd_tree: Trivial Node" << std::endl;
 			return KD_TRIVIAL;			// return (canonical) empty leaf
 		} else {							// construct the node and return
-			std::cout << "rkd_tree: Construct Node with ANNkd_leaf" << std::endl;
+			//std::cout << "rkd_tree: Construct Node with ANNkd_leaf" << std::endl;
 			return new ANNkd_leaf(n, pidx);
 		}
 	}
@@ -336,31 +336,31 @@ ANNkd_ptr rkd_tree(				// recursive construction of kd-tree
 		ANNkd_node *lo, *hi;			// low and high children
 
 										// invoke splitting procedure
-		std::cout << "rkd_tree: Invoke Splitting Procedure (n = " << n << ")" << std::endl;
+		//std::cout << "rkd_tree: Invoke Splitting Procedure (n = " << n << ")" << std::endl;
 		(*splitter)(pa, pidx, bnd_box, n, dim, cd, cv, n_lo);
 
 		ANNcoord lv = bnd_box.lo[cd];	// save bounds for cutting dimension
 		ANNcoord hv = bnd_box.hi[cd];
 
 		bnd_box.hi[cd] = cv;			// modify bounds for left subtree
-		std::cout << "rkd_tree: Build Left Subtree" << std::endl;
+		//std::cout << "rkd_tree: Build Left Subtree" << std::endl;
 		lo = rkd_tree(					// build left subtree
 				pa, pidx, n_lo,			// ...from pidx[0..n_lo-1]
 				dim, bsp, bnd_box, splitter);
 		bnd_box.hi[cd] = hv;			// restore bounds
 
 		bnd_box.lo[cd] = cv;			// modify bounds for right subtree
-		std::cout << "rkd_tree: Build Right Subtree" << std::endl;
+		//std::cout << "rkd_tree: Build Right Subtree" << std::endl;
 		hi = rkd_tree(					// build right subtree
 				pa, pidx + n_lo, n-n_lo,// ...from pidx[n_lo..n-1]
 				dim, bsp, bnd_box, splitter);
 		bnd_box.lo[cd] = lv;			// restore bounds
 
 										// create the splitting node
-		std::cout << "rkd_tree: Create Splitting node with ANNkd_split" << std::endl;
+		//std::cout << "rkd_tree: Create Splitting node with ANNkd_split" << std::endl;
 		ANNkd_split *ptr = new ANNkd_split(cd, cv, lv, hv, lo, hi);
 
-		std::cout << "rkd_tree: Return Pointer to this node" << std::endl;
+		//std::cout << "rkd_tree: Return Pointer to this node" << std::endl;
 		return ptr;						// return pointer to this node
 	}
 } 

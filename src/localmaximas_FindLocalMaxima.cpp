@@ -53,36 +53,25 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 			for (int thread = 0; thread < numCores; thread++) {
 
 				int threadID = omp_get_thread_num();
-				//arma::Mat<double> coords;
-				//arma::Col<unsigned int> idxFinite, idxMaxima;
 
-#pragma omp critical
-				{
-					std::cout << "Thread = " << threadID << " reading from dataList" << std::endl;
-					data = dataList[threadID];
-					std::cout << "&data = " << &data << std::endl;
-				}
+				data = dataList[threadID];
+				Rprintf("ThreadID %i: FindLocalMaxima: &data = %p\n", threadID, &data);
+
 
 				// Make the coordinates
-
-				//std::cout << "Thread = " << threadID << " setting coordinates" << std::endl;
 				arma::Mat<double> coords = SetCoordinates(data);
-				//std::cout << "coords.n_rows = " << coords.n_rows << ", coords.n_cols = " << coords.n_cols << std::endl;
-				//std::cout << "Thread " << threadID << " finished SetCoordinates" << std::endl;
+				Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
 
 
 				// Remove the missing values
-				//std::cout << "Thread = " << threadID << " removing missing values" << std::endl;
 				arma::Col<unsigned int> idxFinite = arma::find_finite(data.z);
 				coords = coords.rows(idxFinite);
 				data.z = data.z.rows(idxFinite);
-				//std::cout << "coords.n_rows = " << coords.n_rows << ", coords.n_cols = " << coords.n_cols << std::endl;
-				//std::cout << "Thread " << threadID << " finished removing missing values" << std::endl;
+				Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
 
 
 
 				// frNN search for local maxima
-				std::cout << "Thread = " << threadID << " finding maxima" << std::endl;
 				arma::Col<unsigned int> idxMaxima = SearchNeighbours(coords, data.z, radius);
 
 
@@ -90,7 +79,6 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				coords = coords.rows(idxMaxima);
 				data.z = data.z.rows(idxMaxima);
 				coords.insert_cols(coords.n_cols, data.z);
-				//std::cout << "Thread " << threadID << " finished updating coordinates" << std::endl;
 
 
 #pragma omp critical
