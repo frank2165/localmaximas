@@ -72,6 +72,7 @@ std::vector<T> subset_by_logical(std::vector<T> &x, std::vector<bool> &lgl){
 RasterData ReadDataset(SEXP sxpHandle);
 arma::Mat<double> SetCoordinates(const RasterData&);
 arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma::Col<double> &z, const double eps);
+std::vector<unsigned int> get_neighbours(unsigned int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx);
 
 
 // Workflow

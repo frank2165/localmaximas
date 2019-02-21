@@ -66,32 +66,16 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 	  bool isMaxima = false;
 	  std::vector<bool> pointTested(nrow, false);
 	  std::vector<unsigned int> maxima;
+	  std::vector<unsigned int> ids;
+	  std::vector<bool>::iterator pt = pointTested.begin();
 
-	  for (unsigned int i = 0; i < nrow; i++) {
+	  for (pt = pointTested.begin(); pt != pointTested.end(); pt++) {
 
-		  if (!pointTested[i]) {
-			  // Find the neighbours to the current point.
-			  std::vector<int> idxNeighbours = regionQuery(i, dataPts, kdTree, eps2, approx);
-			  std::vector<unsigned int> ids(idxNeighbours.begin(), idxNeighbours.end());
+		  if (!(*pt)) {
 
+			  int i = std::distance(pointTested.begin(), pt);
 
-			  // remove self matches
-			  std::vector<bool> take(ids.size(), true);
-			  std::transform(ids.begin(), ids.end(), take.begin(),
-				  [i](size_t pos) { return pos != i; });
-
-#pragma omp critical
-			  {
-				  Rprintf("Thread %i: point %i: (%g, %g, %g)\n", threadID, i, dataPts[i][0], dataPts[i][1], z[i]);
-				  Rprintf("Neighbours: \n");
-				  for (unsigned int k = 0; k < ids.size(); k++){
-					  Rprintf("\t ids[%i] = %i, take[%i] = %s, z[%i] = %g\n", k, ids[k], k, (take[k] ? "true" : "false"), ids[k], z[ids[k]]);
-				  }
-				  Rprintf("\n");
-			  }
-
-
-			  ids = subset_by_logical(ids, take);
+			  ids = get_neighbours(i, dataPts, kdTree, eps2, approx);
 
 
 			  // Check whether the point is a maximum in its neighbourhood
@@ -105,7 +89,7 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 
 
 			  if (isMaxima) {
-				  Rprintf("Thread %i: point %i: push_back")
+				  Rprintf("Thread %i: point %i: push_back &maxima %p\n", threadID, i, &maxima);
 				  maxima.push_back(i);
 
 				  // If the point is a maximum then mark all other points (in the neighbourhood) as having 
@@ -115,7 +99,7 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 				  }
 			  }
 
-			  pointTested[i] = true;
+			  *pt = true;
 		  }
 	  }
 
@@ -135,4 +119,37 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 		  ARMA_maxima(i) = maxima[i];
 	  }
 	  return ARMA_maxima;
+}
+
+
+
+
+std::vector<unsigned int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx){
+
+	// Find the neighbours to the current point.
+	std::vector<int> idxNeighbours = regionQuery(i, dataPts, kdTree, eps2, approx);
+	std::vector<unsigned int> ids(idxNeighbours.begin(), idxNeighbours.end());
+
+
+	// remove self matches
+	std::vector<bool> take(ids.size(), true);
+	std::transform(ids.begin(), ids.end(), take.begin(),
+		[i](size_t pos) { return pos != i; });
+
+	/*
+	#pragma omp critical
+	{
+	Rprintf("Thread %i: point %i: (%g, %g, %g)\n", threadID, i, dataPts[i][0], dataPts[i][1], z[i]);
+	Rprintf("Neighbours: \n");
+	for (unsigned int k = 0; k < ids.size(); k++){
+	Rprintf("\t ids[%i] = %i, take[%i] = %s, z[%i] = %g\n", k, ids[k], k, (take[k] ? "true" : "false"), ids[k], z[ids[k]]);
+	}
+	Rprintf("\n");
+	}
+	*/
+
+
+	ids = subset_by_logical(ids, take);
+
+	return ids;
 }
