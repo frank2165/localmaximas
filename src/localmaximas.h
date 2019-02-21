@@ -42,10 +42,10 @@ struct RasterData{
 
 
 // Utility functions
-bool check_maxima(const unsigned int p, const std::vector<unsigned int> &idxNeighbours, const arma::Col<double> &z);
+bool check_maxima(int p, std::vector<int> &idxNeighbours, arma::Col<double> &z);
 
 template<typename T>
-std::vector<T> subset_by_index(std::vector<T> &x, std::vector<unsigned int> &idx){
+std::vector<T> subset_by_index(std::vector<T> &x, std::vector<int> &idx){
 	std::vector<T> result(idx.size());
 	std::transform(idx.begin(), idx.end(), result.begin(), [x](size_t pos){
 		return x[pos];
@@ -57,7 +57,7 @@ std::vector<T> subset_by_index(std::vector<T> &x, std::vector<unsigned int> &idx
 
 template<typename T>
 std::vector<T> subset_by_logical(std::vector<T> &x, std::vector<bool> &lgl){
-	std::vector<unsigned int> idx;
+	std::vector<int> idx;
 	std::vector<bool>::iterator it = lgl.begin();
 	while ((it = std::find(it, lgl.end(), true)) != lgl.end()){
 		idx.push_back(std::distance(lgl.begin(), it));
@@ -71,8 +71,8 @@ std::vector<T> subset_by_logical(std::vector<T> &x, std::vector<bool> &lgl){
 // Functionality
 RasterData ReadDataset(SEXP sxpHandle);
 arma::Mat<double> SetCoordinates(const RasterData&);
-arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma::Col<double> &z, const double eps);
-std::vector<unsigned int> get_neighbours(unsigned int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx);
+arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double> &z, double eps);
+std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx);
 
 
 // Workflow

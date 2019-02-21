@@ -6,7 +6,7 @@
 
 
 
-bool check_maxima(const unsigned int point, const std::vector<unsigned int> &neighbours, const arma::Col<double> &Z) {
+bool check_maxima(int point, std::vector<int> &neighbours, arma::Col<double> &Z) {
 
 	bool localmaximum;
 	auto it = neighbours.begin();
@@ -16,7 +16,7 @@ bool check_maxima(const unsigned int point, const std::vector<unsigned int> &nei
 	// neighbourhood. If a point is a maxima, then all other points in its neighbourhood cannot be
 	// a maxima. Note however that points may reside in multiple neighbourhoods and so these points
 	// cannot simply be discarded.
-	it = std::find_if(it, neighbours.end(), [&Z, &point](const unsigned int &i){
+	it = std::find_if(it, neighbours.end(), [&Z, &point](const int &i){
 		bool strictLT = Z[point] < Z[i];
 		bool isEQ = Z[point] == Z[i];
 		bool idLT = i < point;

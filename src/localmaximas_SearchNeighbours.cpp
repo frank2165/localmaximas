@@ -29,7 +29,7 @@
 
 
 // [[Rcpp::export]]
-arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma::Col<double> &z, const double eps) {
+arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double> &z, double eps) {
 
 	// ThreadID
 	int threadID = omp_get_thread_num();
@@ -55,7 +55,6 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 		  }
 	  }
 
-	//std::cout << "&dataPts: " << &dataPts << std::endl;
 
 	// create kd-tree
 	ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule);
@@ -65,32 +64,27 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 	// initialise search
 	  bool isMaxima = false;
 	  std::vector<bool> pointTested(nrow, false);
-	  std::vector<unsigned int> maxima;
-	  std::vector<unsigned int> ids;
+	  std::vector<int> maxima;
+	  std::vector<int> ids;
 	  std::vector<bool>::iterator pt = pointTested.begin();
 
 	  for (pt = pointTested.begin(); pt != pointTested.end(); pt++) {
 
 		  if (!(*pt)) {
 
-			  int i = std::distance(pointTested.begin(), pt);
+			  int idx = std::distance(pointTested.begin(), pt);
 
-			  ids = get_neighbours(i, dataPts, kdTree, eps2, approx);
+			  ids = get_neighbours(idx, dataPts, kdTree, eps2, approx);
 
-
+			  
 			  // Check whether the point is a maximum in its neighbourhood
-			  isMaxima = check_maxima(i, ids, z);
+			  isMaxima = check_maxima(idx, ids, z);
 
-
-#pragma omp critical
-			  {
-				  Rprintf("Thread %i: point %i: isMaxima: %i\n", threadID, i, isMaxima);
-			  }
-
+			  Rprintf("Thread %i: point %i: isMaxima: %i\n", threadID, idx, isMaxima);
 
 			  if (isMaxima) {
-				  Rprintf("Thread %i: point %i: push_back &maxima %p\n", threadID, i, &maxima);
-				  maxima.push_back(i);
+				  Rprintf("Thread %i: point %i: push_back &maxima %p\n", threadID, idx, &maxima);
+				  maxima.push_back(idx);
 
 				  // If the point is a maximum then mark all other points (in the neighbourhood) as having 
 				  // been tested, they cannot be a maximum in their respective neighbourhoods.
@@ -124,17 +118,19 @@ arma::Col<unsigned int> SearchNeighbours(const arma::Mat<double> &xy, const arma
 
 
 
-std::vector<unsigned int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx){
+std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx){
 
 	// Find the neighbours to the current point.
 	std::vector<int> idxNeighbours = regionQuery(i, dataPts, kdTree, eps2, approx);
-	std::vector<unsigned int> ids(idxNeighbours.begin(), idxNeighbours.end());
+	
+	std::vector<int> ids(idxNeighbours.begin(), idxNeighbours.end());
 
+	/*
 
 	// remove self matches
 	std::vector<bool> take(ids.size(), true);
 	std::transform(ids.begin(), ids.end(), take.begin(),
-		[i](size_t pos) { return pos != i; });
+		[i](int pos) { return pos != i; });
 
 	/*
 	#pragma omp critical
@@ -146,10 +142,11 @@ std::vector<unsigned int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpoin
 	}
 	Rprintf("\n");
 	}
-	*/
 
 
 	ids = subset_by_logical(ids, take);
 
-	return ids;
+	*/
+
+	return idxNeighbours;
 }

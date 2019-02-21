@@ -20,14 +20,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // SearchNeighbours
-std::vector<int> SearchNeighbours(const arma::Mat<double>& xy, const arma::Col<double>& z, const double eps);
+arma::Col<unsigned int> SearchNeighbours(arma::Mat<double>& xy, arma::Col<double>& z, double eps);
 RcppExport SEXP _localmaximas_SearchNeighbours(SEXP xySEXP, SEXP zSEXP, SEXP epsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const arma::Mat<double>& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< const arma::Col<double>& >::type z(zSEXP);
-    Rcpp::traits::input_parameter< const double >::type eps(epsSEXP);
+    Rcpp::traits::input_parameter< arma::Mat<double>& >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< arma::Col<double>& >::type z(zSEXP);
+    Rcpp::traits::input_parameter< double >::type eps(epsSEXP);
     rcpp_result_gen = Rcpp::wrap(SearchNeighbours(xy, z, eps));
     return rcpp_result_gen;
 END_RCPP

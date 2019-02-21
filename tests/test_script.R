@@ -31,7 +31,7 @@ N <- vapply(tifs, function(f){
 idx  <- order(N, decreasing = FALSE)
 tifs <- tifs[idx]
 
-system.time(local_maxima_search(tifs[c(3, 4)], radius, 2))
+system.time(local_maxima_search(tifs[c(2, 3)], radius, 2))
 
 gc()
 
