@@ -25,6 +25,8 @@
 #ifndef ANN_kd_fix_rad_search_H
 #define ANN_kd_fix_rad_search_H
 
+#include <omp.h>
+#include "ANNx.h"
 #include "kd_tree.h"					// kd-tree declarations
 #include "kd_util.h"					// kd-tree utilities
 #include "pr_queue_k.h"					// k-element priority queue
@@ -39,6 +41,27 @@
 //		procedures.
 //----------------------------------------------------------------------
 
-extern ANNpoint			ANNkdFRQ;			// query point (static copy)
+//extern ANNpoint			ANNkdFRQ;			// query point (static copy)
+
+//----------------------------------------------------------------------
+//		To keep argument lists short, a number of global variables
+//		are maintained which are common to all the recursive calls.
+//		These are given below.
+//----------------------------------------------------------------------
+
+extern int				ANNkdFRDim;				// dimension of space
+extern ANNpoint		ANNkdFRQ;				// query point
+extern ANNdist			ANNkdFRSqRad;			// squared radius search bound
+extern double			ANNkdFRMaxErr;			// max tolerable squared error
+extern ANNpointArray	ANNkdFRPts;				// the points
+extern ANNmin_k*		ANNkdFRPointMK;			// set of k closest points
+
+extern std::vector<int> closest;			  // MFH: set of all closest points
+extern std::vector<double> dists;			  // MFH: set of all closest points
+
+extern int				ANNkdFRPtsVisited;		// total points visited
+extern int				ANNkdFRPtsInRange;		// number of points in the range
+
+#pragma omp threadprivate(ANNkdFRDim, ANNkdFRQ, ANNkdFRSqRad, ANNkdFRMaxErr, ANNkdFRPts, ANNkdFRPointMK, closest, dists, ANNkdFRPtsVisited, ANNkdFRPtsInRange)
 
 #endif

@@ -34,22 +34,3 @@ tifs <- tifs[idx]
 system.time(local_maxima_search(tifs[c(2, 3)], radius, 2))
 
 gc()
-
-
-
-# ## Setup
-# chm <- readGDAL(tifs[8], silent = TRUE)
-# coords <- coordinates(chm)
-# z <- chm@data[[1]]
-# 
-# idx.keep <- which(!is.na(z))
-# coords <- coords[idx.keep, ]
-# z <- z[idx.keep]
-# 
-# i <- 1
-# nn.idx <- nn2(data = coords, query = coords[i, , drop = FALSE], 
-#               searchtype = "radius", radius = radius) %>% 
-#     extract2("nn.idx")
-# 
-# z[nn.idx]
-# which.max(z[nn.idx])

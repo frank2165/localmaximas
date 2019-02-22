@@ -25,6 +25,7 @@
 #ifndef ANN_kd_pr_search_H
 #define ANN_kd_pr_search_H
 
+#include <omp.h>
 #include "kd_tree.h"					// kd-tree declarations
 #include "kd_util.h"					// kd-tree utilities
 #include "pr_queue.h"					// priority queue declarations
@@ -45,5 +46,7 @@ extern double			ANNprMaxErr;	// max tolerable squared error
 extern ANNpointArray	ANNprPts;		// the points
 extern ANNpr_queue		*ANNprBoxPQ;	// priority queue for boxes
 extern ANNmin_k			*ANNprPointMK;	// set of k closest points
+
+#pragma omp threadprivate(ANNprEps, ANNprDim, ANNprQ, ANNprMaxErr, ANNprPts, ANNprBoxPQ, ANNprPointMK)
 
 #endif

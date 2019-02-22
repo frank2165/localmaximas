@@ -10,6 +10,8 @@ local maxima within each file. OpenMP is used in an attempt to minimise the prog
 
 static int MAXTHREADS = omp_get_max_threads();
 
+RasterData data;
+
 
 //[[Rcpp::export]]
 Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
@@ -44,12 +46,11 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 			dataList[j] = ReadDataset(handles[current_pos + j]);
 		}
 
-#pragma omp parallel
+#pragma omp parallel 
 		{
 
-			RasterData data;
 
-#pragma omp for private (data)
+#pragma omp for private(data)
 			for (int thread = 0; thread < numCores; thread++) {
 
 				int threadID = omp_get_thread_num();

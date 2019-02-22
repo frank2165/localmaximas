@@ -37,6 +37,7 @@
 #ifndef ANNx_H
 #define ANNx_H
 
+#include <omp.h>
 #include <iomanip>				// I/O manipulators
 #include "ANN.h"			// ANN includes
 
@@ -57,7 +58,9 @@ enum ANNerr {ANNwarn = 0, ANNabort = 1};
 //----------------------------------------------------------------------
 
 extern int		ANNmaxPtsVisited;	// maximum number of pts visited
-extern int		ANNptsVisited;		// number of pts visited in search
+extern int		ANNptsVisited;	    // number of pts visited in search
+
+#pragma omp threadprivate(ANNmaxPtsVisited, ANNptsVisited)
 
 //----------------------------------------------------------------------
 //	Global function declarations

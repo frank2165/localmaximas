@@ -26,6 +26,9 @@
 
 #include "rgdal.h"
 #include "ANN.h"
+#include "kd_search.h"
+#include "kd_pr_search.h"
+#include "kd_fix_rad_search.h"
 
 
 // Structures
@@ -72,7 +75,7 @@ std::vector<T> subset_by_logical(std::vector<T> &x, std::vector<bool> &lgl){
 RasterData ReadDataset(SEXP sxpHandle);
 arma::Mat<double> SetCoordinates(const RasterData&);
 arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double> &z, double eps);
-std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx);
+std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* kdTree, double &eps2, double &approx);
 
 
 // Workflow

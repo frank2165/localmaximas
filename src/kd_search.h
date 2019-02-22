@@ -25,6 +25,7 @@
 #ifndef ANN_kd_search_H
 #define ANN_kd_search_H
 
+#include <omp.h>
 #include "kd_tree.h"					// kd-tree declarations
 #include "kd_util.h"					// kd-tree utilities
 #include "pr_queue_k.h"					// k-element priority queue
@@ -44,5 +45,7 @@ extern double			ANNkdMaxErr;	// max tolerable squared error
 extern ANNpointArray	ANNkdPts;		// the points (static copy)
 extern ANNmin_k			*ANNkdPointMK;	// set of k closest points
 extern int				ANNptsVisited;	// number of points visited
+
+#pragma omp threadprivate(ANNkdDim, ANNkdQ, ANNkdMaxErr, ANNkdPts, ANNkdPointMK, ANNptsVisited)
 
 #endif

@@ -118,14 +118,15 @@ arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double
 
 
 
-std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kdTree, double &eps2, double &approx){
+std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* kdTree, double &eps2, double &approx){
 
 	// Find the neighbours to the current point.
 	std::vector<int> idxNeighbours = regionQuery(i, dataPts, kdTree, eps2, approx);
+
+	Rprintf("ThreadID %i: point %i: %i Neighbours\n", omp_get_thread_num(), i, idxNeighbours.size());
 	
 	std::vector<int> ids(idxNeighbours.begin(), idxNeighbours.end());
 
-	/*
 
 	// remove self matches
 	std::vector<bool> take(ids.size(), true);
@@ -143,10 +144,10 @@ std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* &kd
 	Rprintf("\n");
 	}
 
+	*/
 
 	ids = subset_by_logical(ids, take);
 
-	*/
 
 	return idxNeighbours;
 }

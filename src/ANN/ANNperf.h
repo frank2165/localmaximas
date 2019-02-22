@@ -37,6 +37,7 @@
 //	basic includes
 //----------------------------------------------------------------------
 
+#include <omp.h>
 #include "ANN.h"					// basic ANN includes
 
 //----------------------------------------------------------------------
@@ -204,12 +205,19 @@ extern ANNsampStat	ann_visit_nds;	// stats on total nodes visits
 extern ANNsampStat	ann_visit_pts;	// stats on points visited
 extern ANNsampStat	ann_coord_hts;	// stats on coordinate hits
 extern ANNsampStat	ann_float_ops;	// stats on floating ops
+
+#pragma omp threadprivate(ann_Ndata_pts, ann_Nvisit_lfs, ann_Nvisit_spl, ann_Nvisit_shr, \
+			ann_Nvisit_pts, ann_Ncoord_hts, ann_Nfloat_ops, ann_visit_lfs, ann_visit_spl, \
+			ann_visit_shr, ann_visit_nds, ann_visit_pts, ann_coord_hts, ann_float_ops)
+
 //----------------------------------------------------------------------
 //  The following need to be part of the public interface, because
 //  they are accessed outside the DLL in ann_test.cpp.
 //----------------------------------------------------------------------
 DLL_API extern ANNsampStat ann_average_err;	// average error
 DLL_API extern ANNsampStat ann_rank_err;	// rank error
+
+#pragma omp threadprivate(ann_average_err, ann_rank_err)
 
 //----------------------------------------------------------------------
 //	Declaration of externally accessible routines for statistics
