@@ -1,6 +1,5 @@
-## Files 1, 6, 12 Worked
-## Files 2, 5, Frozen
-## Files 16 Crashed
+## Script testing the openMP parallel processing implementation
+##
 
 # User defined variables
 radius <- 1.5
@@ -31,6 +30,8 @@ N <- vapply(tifs, function(f){
 idx  <- order(N, decreasing = FALSE)
 tifs <- tifs[idx]
 
-system.time(local_maxima_search(tifs[c(2, 3)], radius, 2))
+system.time(local_maxima_search(tifs, radius, 4))
+
+system.time(lapply(tifs, local_maxima_search, radius, 1))
 
 gc()

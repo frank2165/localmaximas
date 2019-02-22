@@ -50,25 +50,25 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 		{
 
 
-#pragma omp for private(data)
+#pragma omp for private(data, ANNmaxPtsVisited, ANNptsVisited)
 			for (int thread = 0; thread < numCores; thread++) {
 
 				int threadID = omp_get_thread_num();
 
 				data = dataList[threadID];
-				Rprintf("ThreadID %i: FindLocalMaxima: &data = %p\n", threadID, &data);
+				//Rprintf("ThreadID %i: FindLocalMaxima: &data = %p\n", threadID, &data);
 
 
 				// Make the coordinates
 				arma::Mat<double> coords = SetCoordinates(data);
-				Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
+				//Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
 
 
 				// Remove the missing values
 				arma::Col<unsigned int> idxFinite = arma::find_finite(data.z);
 				coords = coords.rows(idxFinite);
 				data.z = data.z.rows(idxFinite);
-				Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
+				//Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
 
 
 
@@ -82,13 +82,13 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				coords.insert_cols(coords.n_cols, data.z);
 
 
-#pragma omp critical
-				{
-					std::cout << "Thread = " << threadID << " writing to maxima" << std::endl;
-					std::cout << "Writing to maxima[" << std::distance(maxima.begin(), it) + threadID << "]" << std::endl;
-					*(it + threadID) = coords;
-					std::cout << "Write complete" << std::endl;
-				}
+//#pragma omp critical
+//				{
+//					std::cout << "Thread = " << threadID << " writing to maxima" << std::endl;
+//					std::cout << "Writing to maxima[" << std::distance(maxima.begin(), it) + threadID << "]" << std::endl;
+//					std::cout << "Write complete" << std::endl;
+//				}
+				*(it + threadID) = coords;
 			}
 
 		}

@@ -193,9 +193,9 @@ void annError(const char *msg, ANNerr level)
 //----------------------------------------------------------------------
 
 int ANNmaxPtsVisited = 0;	// maximum number of pts visited
-//int	ANNptsVisited;			// number of pts visited in search
+int	ANNptsVisited = 0;		// number of pts visited in search
 
-#pragma omp threadprivate(ANNmaxPtsVisited, ANNptsVisited)
+
 
 //----------------------------------------------------------------------
 //	Global function declarations

@@ -46,7 +46,7 @@ arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double
   unsigned int nrow = xy.n_rows;
   unsigned int ncol = xy.n_cols;
 
-	  Rprintf("Thread %i: SearchNeighbours: nrow = %i, ncol = %i\n", threadID, nrow, ncol);
+	  //Rprintf("Thread %i: SearchNeighbours: nrow = %i, ncol = %i\n", threadID, nrow, ncol);
 
 	  ANNpointArray dataPts = annAllocPts(nrow, ncol);
 	  for (unsigned int j = 0; j < ncol; j++) {
@@ -58,7 +58,7 @@ arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double
 
 	// create kd-tree
 	ANNpointSet* kdTree = new ANNkd_tree(dataPts, nrow, ncol, bucketSize, (ANNsplitRule)splitRule);
-	Rprintf("Thread %i: SearchNeighbours: &kdTree = %p\n", threadID, &kdTree);
+	//Rprintf("Thread %i: SearchNeighbours: &kdTree = %p\n", threadID, &kdTree);
 
 
 	// initialise search
@@ -80,10 +80,10 @@ arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double
 			  // Check whether the point is a maximum in its neighbourhood
 			  isMaxima = check_maxima(idx, ids, z);
 
-			  Rprintf("Thread %i: point %i: isMaxima: %i\n", threadID, idx, isMaxima);
+			  //Rprintf("Thread %i: point %i: isMaxima: %i\n", threadID, idx, isMaxima);
 
 			  if (isMaxima) {
-				  Rprintf("Thread %i: point %i: push_back &maxima %p\n", threadID, idx, &maxima);
+				  //Rprintf("Thread %i: point %i: push_back &maxima %p\n", threadID, idx, &maxima);
 				  maxima.push_back(idx);
 
 				  // If the point is a maximum then mark all other points (in the neighbourhood) as having 
@@ -98,7 +98,7 @@ arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double
 	  }
 
 	  //std::cout << "Found maxima: success!" << std::endl;
-	  Rprintf("Thread %i: Finished Finding Maxima\n", threadID);
+	  //Rprintf("Thread %i: Finished Finding Maxima\n", threadID);
 
 	  // cleanup
 	  delete kdTree;
@@ -123,7 +123,7 @@ std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* kdT
 	// Find the neighbours to the current point.
 	std::vector<int> idxNeighbours = regionQuery(i, dataPts, kdTree, eps2, approx);
 
-	Rprintf("ThreadID %i: point %i: %i Neighbours\n", omp_get_thread_num(), i, idxNeighbours.size());
+	//Rprintf("ThreadID %i: point %i: %i Neighbours\n", omp_get_thread_num(), i, idxNeighbours.size());
 	
 	std::vector<int> ids(idxNeighbours.begin(), idxNeighbours.end());
 

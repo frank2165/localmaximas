@@ -137,14 +137,14 @@ std::pair< std::vector<int>, std::vector<double> > ANNkd_tree::annkFRSearch2(
 	closest.clear();
 	dists.clear();
 
-	std::cout << "ThreadID " << omp_get_thread_num() << ": clear" << std::endl;
+	/*std::cout << "ThreadID " << omp_get_thread_num() << ": clear" << std::endl;
 	std::cout << "ThreadID " << omp_get_thread_num() << ": ANNmaxPtsVisited = " << ANNmaxPtsVisited << std::endl;
-	std::cout << "ThreadID " << omp_get_thread_num() << ": ANNkdFRPtsVisited = " << ANNkdFRPtsVisited << std::endl;
+	std::cout << "ThreadID " << omp_get_thread_num() << ": ANNkdFRPtsVisited = " << ANNkdFRPtsVisited << std::endl;*/
 
 	// search starting at the root
 	root->ann_FR_search(annBoxDistance(q, bnd_box_lo, bnd_box_hi, dim));
 
-	std::cout << "ThreadID " << omp_get_thread_num() << ": root->ann_FR_search()" << std::endl;
+	//std::cout << "ThreadID " << omp_get_thread_num() << ": root->ann_FR_search()" << std::endl;
 
 	return std::make_pair(closest, dists);			// return final point count
 
@@ -163,8 +163,8 @@ std::pair< std::vector<int>, std::vector<double> > ANNkd_tree::annkFRSearch2(
 void ANNkd_split::ann_FR_search(ANNdist box_dist)
 {
 
-	std::cout << "ThreadID " << omp_get_thread_num() << ": ANNkd_split::ann_FR_search" << std::endl;
-	std::cout << "ThreadID " << omp_get_thread_num() << ": box_dist = " << box_dist << std::endl;
+	/*std::cout << "ThreadID " << omp_get_thread_num() << ": ANNkd_split::ann_FR_search" << std::endl;
+	std::cout << "ThreadID " << omp_get_thread_num() << ": box_dist = " << box_dist << std::endl;*/
 	
 	// check dist calc term condition
 	if (ANNmaxPtsVisited != 0 && ANNkdFRPtsVisited > ANNmaxPtsVisited) return;
@@ -172,7 +172,7 @@ void ANNkd_split::ann_FR_search(ANNdist box_dist)
 										// distance to cutting plane
 	ANNcoord cut_diff = ANNkdFRQ[cut_dim] - cut_val;
 
-	std::cout << "ThreadID " << omp_get_thread_num() << ": cut_diff = " << cut_diff << std::endl;
+	//std::cout << "ThreadID " << omp_get_thread_num() << ": cut_diff = " << cut_diff << std::endl;
 
 	if (cut_diff < 0) {					// left of cutting plane
 		child[ANN_LO]->ann_FR_search(box_dist);// visit closer child first
@@ -216,8 +216,8 @@ void ANNkd_split::ann_FR_search(ANNdist box_dist)
 
 void ANNkd_leaf::ann_FR_search(ANNdist box_dist)
 {
-	std::cout << "ThreadID " << omp_get_thread_num() << ": ANNkd_leaf::ann_FR_search" << std::endl;
-	std::cout << "ThreadID " << omp_get_thread_num() << ": box_dist = " << box_dist << std::endl;
+	/*std::cout << "ThreadID " << omp_get_thread_num() << ": ANNkd_leaf::ann_FR_search" << std::endl;
+	std::cout << "ThreadID " << omp_get_thread_num() << ": box_dist = " << box_dist << std::endl;*/
 	
 	ANNdist dist;				// distance to data point
 	ANNcoord* pp;				// data coordinate pointer

@@ -25,7 +25,7 @@
 #include <RcppArmadillo.h>
 
 #include "rgdal.h"
-#include "ANN.h"
+#include "ANNx.h"
 #include "kd_search.h"
 #include "kd_pr_search.h"
 #include "kd_fix_rad_search.h"
