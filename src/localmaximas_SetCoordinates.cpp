@@ -6,10 +6,6 @@ arma::Mat<double> SetCoordinates(const RasterData &data) {
 	unsigned int numPts = 0;
 	double origin_x = data.origin_x, origin_y = data.origin_y;
 
-	//std::cout << "SetCoordinates: " << std::endl;
-	//std::cout << "XSize = " << data.XSize << ", YSize = " << data.YSize << std::endl;
-	//std::cout << "origin_x = " << origin_x << ", origin_y = " << origin_y << std::endl;
-	//std::cout << "res_x = " << data.res_x << ", res_y = " << data.res_y << std::endl;
 
 	// Set origin coordinates to be the centroid of the first pixel
 	origin_x += data.res_x / 2;

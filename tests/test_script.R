@@ -32,6 +32,4 @@ tifs <- tifs[idx]
 
 system.time(local_maxima_search(tifs, radius, 4))
 
-system.time(lapply(tifs, local_maxima_search, radius, 1))
-
 gc()

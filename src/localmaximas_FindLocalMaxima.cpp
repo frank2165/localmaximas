@@ -22,7 +22,6 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 	
 	omp_set_num_threads(numCores);
 
-
 	
 	// Allocate memory for output
 	int current_pos = 0;
@@ -30,17 +29,14 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 	std::vector<RasterData> dataList(numCores);
 	std::vector<arma::Mat<double>> maxima(numFiles);
 	std::vector<arma::Mat<double>>::iterator it = maxima.begin();
-	// Rcpp::List maximaList;
 
-	//Rprintf("Files in dataset: %i\n", numFiles);
+
 
 	while(it != maxima.end()) {
 		current_pos = std::distance(maxima.begin(), it); // Does this add any actual safety or could you just update current pos at the end of the while loop?
 		if ((current_pos + numCores) > numFiles) {
 			numCores = numFiles - current_pos;
 		}
-
-		//Rprintf( "Reading datasets: %i - %i\n", current_pos, current_pos + numCores-1);
 
 		for (int j = 0; j < numCores; j++) {
 			dataList[j] = ReadDataset(handles[current_pos + j]);
@@ -56,20 +52,16 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				int threadID = omp_get_thread_num();
 
 				data = dataList[threadID];
-				//Rprintf("ThreadID %i: FindLocalMaxima: &data = %p\n", threadID, &data);
 
 
 				// Make the coordinates
 				arma::Mat<double> coords = SetCoordinates(data);
-				//Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
 
 
 				// Remove the missing values
 				arma::Col<unsigned int> idxFinite = arma::find_finite(data.z);
 				coords = coords.rows(idxFinite);
 				data.z = data.z.rows(idxFinite);
-				//Rprintf("ThreadID %i: FindLocalMaxima: coords.n_rows = %i, coords.n_cols = %i\n", threadID, coords.n_rows, coords.n_cols);
-
 
 
 				// frNN search for local maxima
@@ -81,23 +73,13 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 				data.z = data.z.rows(idxMaxima);
 				coords.insert_cols(coords.n_cols, data.z);
 
-
-//#pragma omp critical
-//				{
-//					std::cout << "Thread = " << threadID << " writing to maxima" << std::endl;
-//					std::cout << "Writing to maxima[" << std::distance(maxima.begin(), it) + threadID << "]" << std::endl;
-//					std::cout << "Write complete" << std::endl;
-//				}
 				*(it + threadID) = coords;
 			}
 
 		}
 		it += numCores;
-		//current_pos += numCores;
 	}
-	
 
-	//Rprintf("Converting std::vector to Rcpp::List\n");
 
 	// Explicitly convert the std::vector to Rcpp::List
 	// maximaList = Rcpp::as<Rcpp::List>(Rcpp::wrap(maxima));
@@ -105,7 +87,6 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 	for (unsigned int i = 0; i < maxima.size(); i++) {
 		maximaList[i] = Rcpp::as<Rcpp::NumericMatrix>(Rcpp::wrap(maxima[i]));
 	}
-
 
 
 	annClose();
