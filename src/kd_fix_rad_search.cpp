@@ -111,16 +111,20 @@ std::pair< std::vector<int>, std::vector<double> > ANNkd_tree::annkFRSearch2(
 	ANNkdFRPtsVisited = 0;				// initialize count of points visited
 	ANNkdFRPtsInRange = 0;				// ...and points in the range
 
+
 	ANNkdFRMaxErr = ANN_POW(1.0 + eps);
 	ANN_FLOP(2)							// increment floating op count
+
 
 	//ANNkdFRPointMK = new ANNmin_k(k);	// create set for closest k points
 
 	closest.clear();
 	dists.clear();
 
+
 	// search starting at the root
 	root->ann_FR_search(annBoxDistance(q, bnd_box_lo, bnd_box_hi, dim));
+
 
 	return std::make_pair(closest, dists);			// return final point count
 
@@ -138,11 +142,14 @@ std::pair< std::vector<int>, std::vector<double> > ANNkd_tree::annkFRSearch2(
 
 void ANNkd_split::ann_FR_search(ANNdist box_dist)
 {
-										// check dist calc term condition
+	
+	// check dist calc term condition
 	if (ANNmaxPtsVisited != 0 && ANNkdFRPtsVisited > ANNmaxPtsVisited) return;
 
-										// distance to cutting plane
+
+	// distance to cutting plane
 	ANNcoord cut_diff = ANNkdFRQ[cut_dim] - cut_val;
+
 
 	if (cut_diff < 0) {					// left of cutting plane
 		child[ANN_LO]->ann_FR_search(box_dist);// visit closer child first
@@ -158,8 +165,7 @@ void ANNkd_split::ann_FR_search(ANNdist box_dist)
 		if (box_dist * ANNkdFRMaxErr <= ANNkdFRSqRad)
 			child[ANN_HI]->ann_FR_search(box_dist);
 
-	}
-	else {								// right of cutting plane
+	} else {								// right of cutting plane
 		child[ANN_HI]->ann_FR_search(box_dist);// visit closer child first
 
 		ANNcoord box_diff = ANNkdFRQ[cut_dim] - cd_bnds[ANN_HI];
@@ -186,6 +192,7 @@ void ANNkd_split::ann_FR_search(ANNdist box_dist)
 
 void ANNkd_leaf::ann_FR_search(ANNdist box_dist)
 {
+	
 	ANNdist dist;				// distance to data point
 	ANNcoord* pp;				// data coordinate pointer
 	ANNcoord* qq;				// query coordinate pointer

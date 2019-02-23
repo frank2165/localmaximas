@@ -13,33 +13,67 @@
 
 */
 
-
-
-
 #define R_NO_REMAP // Recommended
 
 
+#include <vector>
 #include <algorithm>
 #include <iterator>
-#include <assert.h>
 
 #include <R.h>
 #include <Rinternals.h>
-#include <Rcpp.h>
+#include <RcppArmadillo.h>
 
 #include "rgdal.h"
-#include "ANN.h"
+#include "ANNx.h"
+
+
+// Structures
+struct RasterData{
+	int XSize = 0;
+	int YSize = 0;
+	double origin_x = 0.0;
+	double origin_y = 0.0;
+	double res_x = 0.0;
+	double res_y = 0.0;
+	arma::Col<double> z; // Replace with RcppArmadillo varieties
+};
+
 
 
 // Utility functions
-void rebase_index(Rcpp::IntegerVector x);
-bool check_maxima(const int, Rcpp::IntegerVector, Rcpp::NumericVector);
+bool check_maxima(int p, std::vector<int> &idxNeighbours, arma::Col<double> &z);
+
+template<typename T>
+std::vector<T> subset_by_index(std::vector<T> &x, std::vector<int> &idx){
+	std::vector<T> result(idx.size());
+	std::transform(idx.begin(), idx.end(), result.begin(), [x](size_t pos){
+		return x[pos];
+	});
+
+	return result;
+}
+
+
+template<typename T>
+std::vector<T> subset_by_logical(std::vector<T> &x, std::vector<bool> &lgl){
+	std::vector<int> idx;
+	std::vector<bool>::iterator it = lgl.begin();
+	while ((it = std::find(it, lgl.end(), true)) != lgl.end()){
+		idx.push_back(std::distance(lgl.begin(), it));
+		it++;
+	}
+
+	return subset_by_index(x, idx);
+}
 
 
 // Functionality
-Rcpp::NumericMatrix get_coordinates(SEXP sxpHandle);
-Rcpp::NumericVector get_heights(SEXP sxpHandle);
-Rcpp::IntegerVector frNN_search(Rcpp::NumericMatrix xy, Rcpp::NumericVector z, double eps);
+RasterData ReadDataset(SEXP sxpHandle);
+arma::Mat<double> SetCoordinates(const RasterData&);
+arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double> &z, double eps);
+std::vector<int> get_neighbours(int &i, ANNpointArray &dataPts, ANNpointSet* kdTree, double &eps2, double &approx);
 
 
 // Workflow
+arma::Mat<double> FindLocalMaxima(SEXP sxpHandle, double radius);

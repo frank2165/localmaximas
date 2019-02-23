@@ -163,6 +163,7 @@ void ANNkd_leaf::dump(					// dump a leaf node
 	}
 }
 
+
 void ANNbd_shrink::dump(				// dump a shrinking node
 		ostream &out)					// output stream
 {
@@ -173,6 +174,7 @@ void ANNbd_shrink::dump(				// dump a shrinking node
 	child[ANN_IN]->dump(out);			// print in-child
 	child[ANN_OUT]->dump(out);			// print out-child
 }
+
 
 //----------------------------------------------------------------------
 // Load kd-tree from dump file

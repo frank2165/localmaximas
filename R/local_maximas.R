@@ -17,7 +17,7 @@
 #' @return a \code{\link[data.table]{data.table}} containing the 3D coordinates
 #'   of the local maxima in the CHM.
 #' @export
-local_maxima_search <- function(files, search.radius, chm.res = 0.25){
+local_maxima_search <- function(files, search.radius){
     
     ## Input checks
     if(!is.character(files)){
@@ -32,14 +32,9 @@ local_maxima_search <- function(files, search.radius, chm.res = 0.25){
     }
     
     is.tif <- grepl("\\.tif$", files)
-    is.laz <- grepl("\\.la(s|z)", files)
-    bad.ext <- !(is.tif | is.laz)
+    bad.ext <- !is.tif
     if(any(bad.ext)){
-        stop("input must be a vector of files with either a .tif or a .laz extension")
-    }
-    
-    if(any(is.tif) && any(is.laz)){
-        stop("inputs must all have the same extension (either .tif or .laz)")
+        stop("input must be a vector of files with a .tif extension")
     }
     
     
@@ -49,14 +44,9 @@ local_maxima_search <- function(files, search.radius, chm.res = 0.25){
     
     
     ## Different function for .tif or .laz files
-    use.tif <- all(is.tif)
-    maxima <- if(use.tif){
-        lapply(files, local_maximas_tif, search.radius)
-    } else {
-        lapply(files, local_maximas_laz, search.radius, chm.res)
-    }
-    
+    maxima <- lapply(files, local_maximas_tif, search.radius)
     names(maxima) <- files
+    
     return(maxima)
 }
 
@@ -82,66 +72,6 @@ local_maximas_tif <- function(file, search.radius){
     silent <- check_chm_file(file)
     
     
-    ## Get coordinates and heights
-    coords  <- get_coordinates(file.handle)
-    heights <- get_heights(file.handle)
-    
-    
-    ## Remove points with missing heights
-    idx.missing <- which(is.na(heights))
-    if(length(idx.missing) > 0){
-        coords  <- coords[-idx.missing, ]
-        heights <- heights[-idx.missing]
-    }
-    
-    
     ## Find index of local maxima
-    idx.maxima <- frNN_search(coords, heights, search.radius)
-    maxima <- if(length(idx.maxima) > 0){
-        coords  <- as.data.table(coords[idx.maxima, ])
-        heights <- heights[idx.maxima]
-        
-        names(coords) <- c("X", "Y")
-        maxima <- data.table(coords, Z = heights)
-    } else {
-        data.table(X = NA_real_, Y = NA_real_, Z = NA_real_)
-    }
-    
-    return(maxima)
-}
-
-
-
-#' Local maxima search of CHM generated from a .laz file
-#'
-#' @param file path to a single .laz file
-#' @param search.radius the radius around each CHM point that will be searched.
-#' @param chm.res the length of the side of each CHM cell (in metres).
-#'
-#' @return a \code{\link[data.table]{data.table}} containing the 3D coordinates
-#'   of the local maxima in the CHM.
-#' @import data.table
-#' @import lidR
-local_maximas_laz <- function(file, search.radius, chm.res = 0.25){
-    
-    ## Import pointcloud and create CHM grid.
-    candidates <- readLAS(file, select = "xyz", filter = "-keep_classification 5") %>% 
-        grid_metrics(list(Z = max(Z)), res = chm.res) %>% 
-        as.data.table
-    
-    
-    ## Get coordinates and heights
-    points  <- data.matrix(candidates[, c("X", "Y")])
-    heights <- candidates$Z
-    
-    
-    ## Find index of local maxima
-    idx.maxima <- frNN_search(points, heights, min.radius)
-    maxima <- if(length(idx.maxima) > 0){
-        candidates[idx.maxima, ]
-    } else {
-        data.table(X = NA_real_, Y = NA_real_, Z = NA_real_)
-    }
-    
-    return(maxima)
+    FindLocalMaxima(file.handle, search.radius)
 }

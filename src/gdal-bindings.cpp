@@ -684,6 +684,7 @@ RGDAL_OpenDataset(SEXP filename, SEXP read_only, SEXP silent, SEXP allowedDr, SE
   uninstallErrorHandlerAndTriggerError();
 #endif
 
+
 #ifdef GDALV2
   unsigned int RWFlag;
   if (asLogical(read_only))
@@ -713,7 +714,6 @@ RGDAL_OpenDataset(SEXP filename, SEXP read_only, SEXP silent, SEXP allowedDr, SE
   GDALDataset *pDataset = (GDALDataset *) GDALOpen(fn, RWFlag);
 #endif
 
-
   if (pDataset == NULL)
     error("%s\n", CPLGetLastErrorMsg());
 
@@ -742,10 +742,10 @@ hope ;-) */
     __errorHandler(eclass, CPLGetLastErrorNo(), CPLGetLastErrorMsg());
   }*/
 
-
   SEXP sxpHandle = R_MakeExternalPtr((void *) pDataset,
 				     install("GDAL Dataset"),
 				     R_NilValue);
+  Rf_PrintValue(sxpHandle);
 
   return(sxpHandle);
 
