@@ -1,0 +1,11 @@
+# Don't track
+
+# Compiled source #
+###################
+*.o
+*.dll
+
+
+# Data #
+########
+*.tif

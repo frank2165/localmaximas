@@ -1,0 +1,24 @@
+NOT INTENDED FOR DISTRIBUTION!
+
+Imported R packages have the following license levels:
+
+*Rcpp, GPL (>= 2).
+*rgdal, GPL (>= 2).
+*sp, GPL (>= 2).
+*data.table, MPL-2.0.
+*future, LGPL (>= 2.1)
+
+Links to the following R packages, license levels also shown:
+
+*RcppArmadillo, GPL (>= 2).
+
+
+Compiled code uses the following libraries, license levels also shown:
+
+*GDAL, Unknown (provided by rwinlib).
+*ANN, LGPL.
+
+
+Compiled code also taken from the following source:
+
+* RANN R package, GPL-3.0.

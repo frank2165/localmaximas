@@ -46,4 +46,6 @@ extern ANNpointArray	ANNprPts;		// the points
 extern ANNpr_queue		*ANNprBoxPQ;	// priority queue for boxes
 extern ANNmin_k			*ANNprPointMK;	// set of k closest points
 
+#pragma omp threadprivate(ANNprEps, ANNprDim, ANNprQ, ANNprMaxErr, ANNprPts, ANNprBoxPQ, ANNprPointMK)
+
 #endif
