@@ -11,6 +11,7 @@
 #'
 #' @return A matrix containing the (x,y,z) coordinates of each maximum.
 #' @export
+#' @importFrom rgdal GDAL.open
 local_maxima_search <- function(files, search.radius, num.cores = 4){
     
     ## Input Checks

@@ -6,7 +6,6 @@ radius <- 1.5
 tifs <- dir(pattern = "\\.tif$", full.names = TRUE, recursive = TRUE)
 
 # Attach Packages
-library(RANN)
 library(rgdal)
 library(magrittr)
 library(localmaximas)

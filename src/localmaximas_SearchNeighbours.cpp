@@ -20,9 +20,6 @@
 
 // Note: does not return self-matches unless selfmatches = TRUE
 
-#include <iostream>
-#include <omp.h>
-
 #include "localmaximas.h"
 #include "R_regionQuery.h"
 
@@ -31,8 +28,6 @@
 // [[Rcpp::export]]
 arma::Col<unsigned int> SearchNeighbours(arma::Mat<double> &xy, arma::Col<double> &z, double eps) {
 
-	// ThreadID
-	int threadID = omp_get_thread_num();
 
 	// formerly arguments to frNN
 	int bucketSize = 10;	// default to frNN
