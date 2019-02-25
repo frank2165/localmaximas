@@ -1,14 +1,15 @@
-
+#include <omp.h>
 #include "localmaximas.h"
 
 
 
 RasterData ReadDataset(SEXP sxpHandle){
 
-	RasterData data; // Need to make sure that memory is allocated on the heap (maybe you need a class?)
+	int ThreadID = omp_get_thread_num();
+
+	RasterData data;
 	SEXP sxpXSize, sxpYSize, sxpDimReg, sxpDimOut, sxpInterleave, sxpGt, sxpRasterPtr, sxpHeights;
 	Rcpp::S4 RGDAL_GDALRasterBand("GDALRasterBand");
-
 
 
 	// Get XSize and YSize

@@ -34,8 +34,10 @@ Rcpp::List FindLocalMaxima(Rcpp::List handles, double radius, int numCores){
 #pragma omp for private(data, ANNmaxPtsVisited, ANNptsVisited)
 		for (int file = 0; file < numFiles; file++) {
 
-
-			data = ReadDataset(handles[file]);
+#pragma omp critical(ReadData)
+			{
+				data = ReadDataset(handles[file]);
+			}
 
 
 			// Make the coordinates
