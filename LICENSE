@@ -6,6 +6,7 @@ Imported R packages have the following license levels:
 *rgdal, GPL (>= 2).
 *sp, GPL (>= 2).
 *data.table, MPL-2.0.
+*future, LGPL (>= 2.1)
 
 Links to the following R packages, license levels also shown:
 

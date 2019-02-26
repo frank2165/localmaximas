@@ -1,14 +1,16 @@
 Package: localmaximas
 Type: Package
 Title: Identifies locally maximal points in a Canopy Height Map
-Version: 0.1.0
+Version: 0.1.2
+
 Date: 2019-02-23
 Author: Marc Fletcher
 Maintainer: Marc Fletcher <Marc.Fletcher@hqplantations.com.au>
 Description: Performs a fixed radius nearest-neighbour search on a canopy height map with the 
-		aim to identify points that are the tallest in their neighbourhood. Single Threaded.
+		aim to identify points that are the tallest in their neighbourhood. Parallelism implemented
+		with future package.
 License: LICENSE
-Imports: Rcpp (>= 0.12.18), rgdal (>= 1.3-6), sp (>= 1.3-1), data.table (>= 1.11.8)
+Imports: Rcpp (>= 0.12.18), rgdal (>= 1.3-6), sp (>= 1.3-1), data.table (>= 1.11.8), future (>= 1.10.0)
 LinkingTo: Rcpp, RcppArmadillo, sp
 RoxygenNote: 6.1.1
 SystemRequirements: C++11, OpenMP

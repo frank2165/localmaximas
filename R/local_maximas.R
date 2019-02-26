@@ -17,6 +17,9 @@
 #' @return a \code{\link[data.table]{data.table}} containing the 3D coordinates
 #'   of the local maxima in the CHM.
 #' @export
+#' @import future
+#' @importFrom stats setNames
+
 local_maxima_search <- function(files, search.radius){
     
     ## Input checks
@@ -44,7 +47,13 @@ local_maxima_search <- function(files, search.radius){
     
     
     ## Different function for .tif or .laz files
-    maxima <- lapply(files, local_maximas_tif, search.radius)
+    maxima  <- setNames(vector("list", length = length(files)), files)
+    use.tif <- all(is.tif)
+    for(f in files){
+        maxima[[f]] <- future({local_maximas_tif(f, search.radius)}, substitute = TRUE)
+    }
+    
+    maxima <- lapply(maxima, value)
     names(maxima) <- files
     
     return(maxima)

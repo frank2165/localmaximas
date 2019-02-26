@@ -1,6 +1,6 @@
 #' Check attributes of .tif file
 #'
-#' @param fname Character vector containing the file name.
+#' @param fname Character containing the file name.
 #'
 #' @return NULL
 #' @import rgdal
