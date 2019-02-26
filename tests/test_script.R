@@ -35,6 +35,15 @@ N <- vapply(tifs, function(f){
 idx  <- order(N, decreasing = FALSE)
 tifs <- tifs[idx]
 
-system.time(local_maxima_search(tifs, radius))
+system.time(maxima <- local_maxima_search(tifs, radius))
 
 gc()
+
+
+maxima <- lapply(maxima, function(xy) {
+    SpatialPoints(coords = xy)
+})
+
+
+plot_tif(tifs[17])
+plot(maxima[[17]], col = "red", add = TRUE)
