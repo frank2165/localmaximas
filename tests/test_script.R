@@ -16,7 +16,6 @@ library(localmaximas)
 plan("multisession", workers = 4)
 
 
-
 ## Helper functions
 plot_tif <- function(f){
     readGDAL(f, silent = TRUE) %>% plot
@@ -35,8 +34,8 @@ N <- vapply(tifs, function(f){
 idx  <- order(N, decreasing = FALSE)
 tifs <- tifs[idx]
 
-system.time(maxima <- local_maxima_search(tifs, radius))
 
+system.time(maxima <- local_maxima_search(tifs, radius))
 gc()
 
 

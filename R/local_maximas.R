@@ -19,6 +19,7 @@
 #' @export
 #' @import future
 #' @importFrom stats setNames
+
 local_maxima_search <- function(files, search.radius){
     
     ## Input checks
@@ -54,6 +55,7 @@ local_maxima_search <- function(files, search.radius){
     
     maxima <- lapply(maxima, value)
     names(maxima) <- files
+    
     return(maxima)
 }
 
